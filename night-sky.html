@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; overflow: hidden; background: #000; user-select: none; -webkit-user-select: none; }
@@ -194,6 +196,119 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
 #gallery-full.open { display: flex; animation: overlayFadeIn 0.4s ease-out; }
 #gallery-full img { max-width: 94vw; max-height: 94vh; border-radius: 6px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
 
+/* ── Boot terminal ───────────────────────────────────────────────────────────── */
+#boot-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: #000;
+  animation: bt-flicker 9s step-end infinite;
+}
+/* glow / vignette */
+#boot-overlay::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background:
+    radial-gradient(ellipse 75% 65% at 38% 48%, rgba(255,255,255,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, transparent 45%, rgba(0,0,0,0.55) 100%);
+}
+/* scanlines */
+#boot-overlay::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px, transparent 3px,
+    rgba(0,0,0,0.13) 3px, rgba(0,0,0,0.13) 4px
+  );
+}
+#boot-overlay.bt-done {
+  pointer-events: none;
+  animation: bt-crt-off 0.65s ease-in forwards;
+}
+@keyframes bt-crt-off {
+  0%   { opacity: 1; transform: none;                      filter: brightness(1);   }
+  25%  { opacity: 1; transform: scaleY(1);                 filter: brightness(2.5); }
+  55%  { opacity: 1; transform: scaleY(0.005) scaleX(1.1); filter: brightness(6);   }
+  80%  { opacity: 1; transform: scaleY(0.005) scaleX(0.3); filter: brightness(2);   }
+  100% { opacity: 0; transform: scaleY(0.005) scaleX(0);   filter: brightness(0);   }
+}
+#boot-terminal {
+  position: absolute;
+  top: 10vh; left: 7vw;
+  width: 66vw;
+  z-index: 2;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+}
+.bt-line {
+  font-size: clamp(14px, 2.1vw, 20px);
+  color: #fff;
+  line-height: 2.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 4px  rgba(255,255,255,1),
+    0 0 14px rgba(255,255,255,0.75),
+    0 0 40px rgba(255,255,255,0.30),
+    0 0 80px rgba(255,255,255,0.10);
+  white-space: pre;
+}
+.bt-header {
+  color: rgba(255,255,255,0.40);
+  font-size: clamp(10px, 1.4vw, 14px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  text-shadow: 0 0 6px rgba(255,255,255,0.25);
+}
+.bt-last {
+  color: rgba(255,255,255,0.50);
+  margin-top: 6px;
+  text-shadow:
+    0 0 4px  rgba(255,255,255,0.8),
+    0 0 20px rgba(255,255,255,0.35);
+}
+.bt-bar { color: rgba(255,255,255,0.28); text-shadow: none; }
+.bt-love-pct {
+  text-shadow:
+    0 0 4px  rgba(255,255,255,1),
+    0 0 16px rgba(255,255,255,0.85),
+    0 0 50px rgba(255,255,255,0.40),
+    0 0 100px rgba(255,255,255,0.15);
+}
+.bt-love-inf {
+  animation: bt-love-pulse 1.2s ease-in-out infinite;
+}
+@keyframes bt-love-pulse {
+  0%, 100% { text-shadow: 0 0 4px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,0.8),  0 0 60px rgba(255,255,255,0.35); }
+  50%       { text-shadow: 0 0 8px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,1),   0 0 100px rgba(255,255,255,0.6), 0 0 160px rgba(255,255,255,0.2); }
+}
+.bt-cursor {
+  display: inline-block;
+  color: #fff;
+  text-shadow:
+    0 0 4px  rgba(255,255,255,1),
+    0 0 16px rgba(255,255,255,0.9),
+    0 0 40px rgba(255,255,255,0.55),
+    0 0 80px rgba(255,255,255,0.20);
+  animation: bt-blink 0.55s step-end infinite;
+}
+@keyframes bt-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+@keyframes bt-flicker {
+  0%, 95%, 100% { opacity: 1; }
+  96%            { opacity: 0.88; }
+  96.5%          { opacity: 1; }
+  98%            { opacity: 0.93; }
+  98.4%          { opacity: 1; }
+}
+/* mobile */
+@media (max-width: 600px) {
+  #boot-terminal { top: 7vh; left: 5vw; width: 90vw; }
+  .bt-line   { font-size: 13px; letter-spacing: 0.02em; white-space: pre-wrap; }
+  .bt-header { font-size: 11px; letter-spacing: 0.06em; white-space: pre-wrap; }
+}
+
 /* ── Toast ───────────────────────────────────────────────────────────────────── */
 #toast {
   position: fixed; top: 54px; left: 50%; transform: translateX(-50%);
@@ -211,11 +326,12 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
 #timer-hud {
   position: fixed; top: 20px; left: 20px;
   width: 52px; height: 52px; z-index: 10;
+  display: grid; place-items: center;
   user-select: none; cursor: pointer;
   transition: opacity 0.3s, transform 0.2s;
 }
 #timer-hud:hover { opacity: 0.85; transform: scale(1.05); }
-.timer-svg { display: block; overflow: visible; }
+.timer-svg { grid-area: 1/1; display: block; overflow: visible; }
 .timer-track { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 1.6; }
 .timer-arc {
   fill: none; stroke: rgb(160,210,255); stroke-width: 1.6;
@@ -226,8 +342,7 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
   filter: drop-shadow(0 0 4px rgba(160,210,255,0.4));
 }
 #timer-time {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
+  grid-area: 1/1;
   font: 9px/1 'Georgia', serif;
   color: rgba(200,225,255,0.70);
   letter-spacing: 0.04em; white-space: nowrap;
@@ -237,7 +352,7 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
 /* ── Welcome overlay ─────────────────────────────────────────────────────────── */
 #timer-welcome {
   position: fixed; inset: 0; z-index: 50;
-  background: rgba(0,2,16,0.92);
+  background: rgba(4,2,14,0.96);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   font-family: 'Georgia', serif;
@@ -245,35 +360,43 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
   transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(5px);
 }
+#timer-welcome::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(180,80,120,0.14) 0%, transparent 75%),
+              radial-gradient(ellipse 70% 50% at 50% 100%, rgba(100,60,180,0.10) 0%, transparent 75%);
+  pointer-events: none;
+}
+#timer-welcome > * { position: relative; z-index: 1; }
 #timer-welcome.visible   { opacity: 1; pointer-events: all; }
 #timer-welcome.dismissing { opacity: 0; pointer-events: none; }
 
 .tw-star {
-  font-size: 26px; color: rgba(190,215,255,0.50);
+  font-size: 26px; color: rgba(255,205,150,0.50);
   margin-bottom: 24px;
   animation: twStarPulse 4s ease-in-out infinite;
 }
 @keyframes twStarPulse {
-  0%,100% { color: rgba(190,215,255,0.35); text-shadow: none; transform: scale(1); }
-  50%      { color: rgba(220,240,255,0.85); text-shadow: 0 0 25px rgba(170,205,255,0.60); transform: scale(1.15); }
+  0%,100% { color: rgba(255,195,120,0.35); text-shadow: none; transform: scale(1); }
+  50%      { color: rgba(255,225,170,0.90); text-shadow: 0 0 25px rgba(255,180,80,0.45); transform: scale(1.15); }
 }
 .tw-night {
   font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
-  color: rgba(140,175,255,0.45); margin-bottom: 22px;
+  color: rgba(230,180,140,0.50); margin-bottom: 22px;
 }
 .tw-title {
   font-size: clamp(24px, 6vw, 42px);
-  color: rgba(220,238,255,0.95);
+  color: rgba(255,240,220,0.95);
   letter-spacing: 0.04em; font-weight: normal;
   text-align: center;
-  text-shadow: 0 0 60px rgba(140,185,255,0.25);
+  text-shadow: 0 0 60px rgba(255,180,80,0.20);
   margin: 0 0 10px;
   padding: 0 20px;
 }
 #tw-subtitle {
   font-size: clamp(13px, 2.6vw, 16px);
   font-style: italic;
-  color: rgba(150,185,255,0.55);
+  color: rgba(210,175,190,0.58);
   letter-spacing: 0.06em; margin: 0 0 36px;
   padding: 0 30px; text-align: center;
 }
@@ -285,11 +408,11 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
 }
 .tw-track { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 1.8; }
 .tw-arc {
-  fill: none; stroke: rgb(160,210,255); stroke-width: 1.8;
+  fill: none; stroke: rgba(255,210,130,0.85); stroke-width: 1.8;
   stroke-linecap: round;
   stroke-dasharray: 276.46 276.46;
   transform-origin: 54px 54px; transform: rotate(-90deg);
-  filter: drop-shadow(0 0 8px rgba(130,185,255,0.4));
+  filter: drop-shadow(0 0 8px rgba(255,180,80,0.35));
   transition: stroke 1.5s ease;
 }
 .tw-arc-inner {
@@ -298,28 +421,28 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
   text-align: center; pointer-events: none;
 }
 #tw-time-text {
-  font-size: 22px; color: rgba(220,238,255,0.95);
+  font-size: 22px; color: rgba(255,225,170,0.92);
   letter-spacing: 0.04em; line-height: 1;
 }
 .tw-arc-label {
   font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(145,180,255,0.45); margin-top: 8px;
+  color: rgba(230,180,140,0.45); margin-top: 8px;
 }
 
 #tw-enter-btn {
-  background: rgba(140,185,255,0.05);
-  border: 1px solid rgba(140,185,255,0.30); border-radius: 36px;
+  background: rgba(255,185,130,0.07);
+  border: 1px solid rgba(255,185,130,0.28); border-radius: 36px;
   padding: 13px 40px;
-  color: rgba(195,220,255,0.80);
+  color: rgba(255,215,180,0.80);
   font: 12px/1 'Georgia', serif; letter-spacing: 0.24em; text-transform: uppercase;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.2, 0, 0.2, 1);
 }
 #tw-enter-btn:hover {
-  background: rgba(140,185,255,0.12);
-  border-color: rgba(180,215,255,0.60);
-  color: rgba(230,242,255,1);
-  box-shadow: 0 0 30px rgba(140,190,255,0.15);
+  background: rgba(255,185,130,0.16);
+  border-color: rgba(255,185,130,0.58);
+  color: rgba(255,240,210,1);
+  box-shadow: 0 0 30px rgba(255,160,80,0.15);
   transform: translateY(-2px);
 }
 #tw-enter-btn:active { transform: translateY(1px) scale(0.98); }
@@ -364,7 +487,7 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
   color: rgba(210,175,190,0.55); letter-spacing: 0.06em; margin: 0 0 40px;
 }
 
-/* ── countdown block — visual centrepiece ── */
+/* ── countdown block  /  visual centrepiece ── */
 .te-countdown-wrap {
   margin-bottom: 36px;
 }
@@ -831,39 +954,47 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
 /* ── Manual / Guide overlay ──────────────────────────────────────────────────── */
 #manual-overlay {
   display: none; position: fixed; inset: 0; z-index: 62;
-  background: rgba(0,2,14,0.97); backdrop-filter: blur(20px);
+  background: rgba(4,2,14,0.98); backdrop-filter: blur(20px);
   overflow-y: auto; -webkit-overflow-scrolling: touch;
   font-family: 'Georgia', serif;
+}
+#manual-overlay::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(180,80,120,0.13) 0%, transparent 75%),
+              radial-gradient(ellipse 70% 50% at 50% 100%, rgba(100,60,180,0.10) 0%, transparent 75%);
+  pointer-events: none;
 }
 #manual-overlay.open { display: block; animation: shopFadeIn 0.4s ease-out; }
 #manual-close {
   position: sticky; top: 16px; float: right; margin: 16px 20px 0 0;
-  background: none; border: 1px solid rgba(140,175,255,0.20);
+  background: none; border: 1px solid rgba(255,185,130,0.22);
   border-radius: 50%; width: 36px; height: 36px;
-  color: rgba(160,190,255,0.50); font-size: 14px; cursor: pointer;
+  color: rgba(230,180,140,0.55); font-size: 14px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: border-color 0.2s, color 0.2s; z-index: 1;
 }
-#manual-close:hover { border-color: rgba(180,210,255,0.55); color: rgba(210,230,255,0.90); }
+#manual-close:hover { border-color: rgba(255,185,130,0.55); color: rgba(255,215,180,0.95); }
 #manual-content {
   max-width: 560px; margin: 0 auto;
   padding: 50px 28px 90px; clear: both;
+  position: relative; z-index: 1;
 }
 .man-transmission {
   text-align: center; padding: 10px 0 38px;
-  border-bottom: 1px solid rgba(140,175,255,0.10); margin-bottom: 44px;
+  border-bottom: 1px solid rgba(255,185,130,0.10); margin-bottom: 44px;
 }
 .man-signal {
   font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
-  color: rgba(100,200,255,0.40); margin-bottom: 24px;
+  color: rgba(230,180,140,0.45); margin-bottom: 24px;
 }
 .man-opening {
-  font-size: 21px; color: rgba(220,235,255,0.88); line-height: 1.6; margin-bottom: 18px;
-  text-shadow: 0 0 60px rgba(140,200,255,0.18);
+  font-size: 21px; color: rgba(255,240,220,0.90); line-height: 1.6; margin-bottom: 18px;
+  text-shadow: 0 0 60px rgba(255,180,80,0.15);
   display: inline-block; /* needed for transform animation */
 }
 .man-tagline {
-  font-size: 13px; color: rgba(140,175,255,0.52); font-style: italic; line-height: 1.8;
+  font-size: 13px; color: rgba(210,175,190,0.58); font-style: italic; line-height: 1.8;
   margin-top: 4px;
 }
 .man-chapter { margin-bottom: 48px; }
@@ -872,16 +1003,16 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
 }
 .man-heading::before, .man-heading::after {
   content: ''; flex: 1; height: 1px;
-  background: linear-gradient(to right, transparent, rgba(140,185,255,0.18), transparent);
+  background: linear-gradient(to right, transparent, rgba(255,185,130,0.18), transparent);
 }
 .man-heading span {
   font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase;
-  color: rgba(155,200,255,0.50); white-space: nowrap;
+  color: rgba(230,180,140,0.55); white-space: nowrap;
 }
 .man-body {
-  font-size: 14px; color: rgba(172,200,255,0.68); line-height: 1.95; margin-bottom: 14px;
+  font-size: 14px; color: rgba(220,190,170,0.68); line-height: 1.95; margin-bottom: 14px;
 }
-.man-body em   { color: rgba(220,235,255,0.90); font-style: normal; }
+.man-body em   { color: rgba(255,240,220,0.92); font-style: normal; }
 .man-body strong { color: rgba(255,220,90,0.82); font-weight: normal; }
 .man-diagram-row {
   display: flex; gap: 20px; justify-content: center;
@@ -889,17 +1020,17 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
 }
 .man-diagram { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .man-diagram svg {
-  border-radius: 12px; background: rgba(3,5,22,0.85);
-  border: 1px solid rgba(140,175,255,0.10);
+  border-radius: 12px; background: rgba(3,2,16,0.88);
+  border: 1px solid rgba(255,185,130,0.10);
 }
 .man-caption {
   font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
-  color: rgba(120,160,255,0.38);
+  color: rgba(230,170,120,0.40);
 }
 .man-list { margin: 10px 0 18px; padding: 0; list-style: none; }
 .man-list li {
-  font-size: 13px; color: rgba(160,195,255,0.62); padding: 6px 0;
-  border-bottom: 1px solid rgba(140,175,255,0.07);
+  font-size: 13px; color: rgba(220,190,170,0.62); padding: 6px 0;
+  border-bottom: 1px solid rgba(255,185,130,0.07);
   display: flex; gap: 10px; line-height: 1.65;
 }
 .man-warning {
@@ -909,34 +1040,34 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
 }
 .man-closing {
   text-align: center; padding: 40px 0 0;
-  border-top: 1px solid rgba(140,175,255,0.10); margin-top: 10px;
+  border-top: 1px solid rgba(255,185,130,0.10); margin-top: 10px;
 }
-.man-closing-star { font-size: 20px; color: rgba(180,210,255,0.28); margin-bottom: 20px; }
+.man-closing-star { font-size: 20px; color: rgba(255,205,150,0.30); margin-bottom: 20px; }
 .man-closing-text {
-  font-size: 15px; color: rgba(195,218,255,0.62); line-height: 2.0; font-style: italic;
+  font-size: 15px; color: rgba(225,200,185,0.65); line-height: 2.0; font-style: italic;
 }
 .man-closing-sig {
   margin-top: 22px; font-size: 10px; letter-spacing: 0.20em; text-transform: uppercase;
-  color: rgba(120,160,255,0.30);
+  color: rgba(210,170,130,0.35);
 }
 #manual-btn {
-  background: none; border: 1px solid rgba(140,185,255,0.16); border-radius: 20px;
-  padding: 8px 22px; color: rgba(140,180,255,0.45);
+  background: none; border: 1px solid rgba(255,185,130,0.18); border-radius: 20px;
+  padding: 8px 22px; color: rgba(230,180,140,0.50);
   font: 10px/1 'Georgia', serif; letter-spacing: 0.18em; text-transform: uppercase;
   cursor: pointer; margin-top: 14px;
   transition: border-color 0.3s, color 0.3s;
 }
-#manual-btn:hover { border-color: rgba(180,215,255,0.38); color: rgba(185,218,255,0.78); }
+#manual-btn:hover { border-color: rgba(255,185,130,0.45); color: rgba(255,215,180,0.85); }
 #manual-hud-btn {
   position: fixed; bottom: 38px; right: 20px;
   width: 36px; height: 36px; border-radius: 50%;
-  background: none; border: 1px solid rgba(255,255,255,0.14);
-  color: rgba(180,205,255,0.38); font: 14px/1 'Georgia', serif;
+  background: none; border: 1px solid rgba(255,185,130,0.18);
+  color: rgba(230,180,140,0.42); font: 14px/1 'Georgia', serif;
   cursor: pointer; z-index: 62; display: flex; align-items: center; justify-content: center;
   transition: border-color 0.25s, color 0.25s;
   -webkit-tap-highlight-color: transparent;
 }
-#manual-hud-btn:hover { border-color: rgba(180,210,255,0.40); color: rgba(200,225,255,0.75); }
+#manual-hud-btn:hover { border-color: rgba(255,185,130,0.45); color: rgba(255,215,180,0.80); }
 
 /* ── Manual animations ──────────────────────────────────────────────────────── */
 @keyframes man-twinkle {
@@ -1020,115 +1151,113 @@ body:has(#timer-welcome.visible) #manual-hud-btn { display: none; }
 /* ── Roue Céleste overlay ────────────────────────────────────────────────── */
 #roulette-overlay {
   position: fixed; inset: 0; z-index: 70;
-  background: rgba(3,1,15,0.97);
-  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(180,80,120,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 50% at 50% 100%, rgba(100,60,180,0.11) 0%, transparent 70%),
+    rgb(4,2,14);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex; flex-direction: column; align-items: center;
   font-family: 'Georgia', serif;
   opacity: 0; pointer-events: none;
-  transition: opacity 0.35s ease;
-}
-#roulette-overlay::before {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse 75% 75% at 50% 50%, rgba(55,15,130,0.22) 0%, transparent 70%);
-  pointer-events: none;
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 #roulette-overlay.open { opacity: 1; pointer-events: all; }
 
+/* Close stays in the viewport corner  /  position:absolute on a fixed parent
+   is correct; it does NOT scroll with content. */
 .rl-close-x {
-  position: absolute; top: max(18px, env(safe-area-inset-top, 18px)); right: 18px;
-  z-index: 2;
+  position: absolute;
+  top: max(20px, env(safe-area-inset-top, 20px)); right: 20px;
+  z-index: 1;
   width: 38px; height: 38px;
   display: flex; align-items: center; justify-content: center;
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 50%;
   font: 16px/1 Georgia, serif;
-  color: rgba(180,195,255,0.55);
+  color: rgba(210,185,180,0.55);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s;
 }
-.rl-close-x:hover  { background: rgba(255,255,255,0.13); color: rgba(215,225,255,0.90); }
 .rl-close-x:active { background: rgba(255,255,255,0.18); }
 
+/* margin: auto on a flex item distributes remaining vertical space equally,
+   centering the card when there's room and collapsing to 0 when scrolling. */
 .rl-inner {
-  position: relative; z-index: 1;
-  width: 100%; max-width: 380px;
-  padding: 0 24px;
+  margin: auto 0;
+  width: 100%; max-width: 400px;
+  padding: max(64px, env(safe-area-inset-top, 20px)) 24px 48px;
+  box-sizing: border-box;
   display: flex; flex-direction: column; align-items: center;
+  text-align: center;
 }
-
+.rl-eyebrow {
+  font-size: 18px; color: rgba(255,205,150,0.50);
+  margin: 0 0 20px;
+  animation: twStarPulse 5s ease-in-out infinite;
+}
 .rl-title {
-  font: normal clamp(16px,4.5vw,22px)/1 'Georgia', serif;
-  letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(200,185,255,0.72);
-  margin: 0 0 6px;
+  font-size: clamp(24px, 6vw, 38px);
+  color: rgba(255,240,220,0.95); letter-spacing: 0.03em;
+  font-weight: normal; margin: 0 0 10px;
 }
 .rl-sub {
-  font: italic 12px/1 'Georgia', serif;
-  letter-spacing: 0.08em;
-  color: rgba(140,120,185,0.38);
-  margin: 0 0 18px;
+  font: italic clamp(12px, 2.4vw, 15px)/1.4 'Georgia', serif;
+  color: rgba(210,175,190,0.55); letter-spacing: 0.06em;
+  margin: 0 0 28px;
 }
-
-/* Canvas is always drawn at 320×320 px internally.
-   CSS scales it to a square that fits the screen — no distortion. */
-#roulette-canvas {
-  display: block;
-  width:  min(72vw, 44vh, 300px);
-  height: min(72vw, 44vh, 300px);
-  margin-bottom: 14px;
-}
+/* override global `canvas { position: fixed }` rule  /  wheel must flow inside the overlay */
+#roulette-canvas { position: static; display: block; margin: 0 auto 12px; }
 
 .rl-result {
-  height: 26px;
-  width: 100%;
+  height: 28px; width: 100%;
   display: flex; align-items: center; justify-content: center;
-  font: italic clamp(14px,4vw,18px)/1 'Georgia', serif;
+  font: italic clamp(14px, 3.8vw, 18px)/1 'Georgia', serif;
   letter-spacing: 0.07em;
   color: rgba(255,228,120,0.96);
   text-shadow: 0 0 28px rgba(255,195,35,0.55);
-  margin-bottom: 16px;
-  opacity: 0;
-  transform: translateY(5px) scale(0.94);
+  margin: 0 0 18px;
+  opacity: 0; transform: translateY(5px) scale(0.94);
   transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22,1,0.36,1);
 }
 .rl-result.show { opacity: 1; transform: none; }
 
 .rl-spin-btn {
-  width: 100%; padding: 18px;
-  background: rgba(110,60,240,0.17);
-  border: 1px solid rgba(140,90,255,0.42);
-  border-radius: 16px;
-  font: 15px/1 'Georgia', serif;
-  letter-spacing: 0.16em;
-  color: rgba(215,195,255,0.92);
+  width: 100%; padding: 14px 26px;
+  background: rgba(255,185,130,0.08);
+  border: 1px solid rgba(255,185,130,0.25);
+  border-radius: 14px;
+  font: 13px/1 'Georgia', serif; letter-spacing: 0.08em;
+  color: rgba(255,215,180,0.75);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
-  margin-bottom: 10px;
+  transition: all 0.3s ease;
+  margin: 0 0 10px;
 }
-.rl-spin-btn:hover:not(:disabled) {
-  background: rgba(110,60,240,0.28);
-  border-color: rgba(170,120,255,0.72);
-  box-shadow: 0 0 28px rgba(110,55,255,0.26);
+.rl-spin-btn:active:not(:disabled) {
+  background: rgba(255,185,130,0.20);
+  border-color: rgba(255,185,130,0.60);
+  color: rgba(255,240,210,1);
 }
-.rl-spin-btn:active:not(:disabled) { background: rgba(110,60,240,0.38); }
 .rl-spin-btn:disabled {
-  background: none;
-  border-color: rgba(255,255,255,0.07);
-  color: rgba(255,255,255,0.20);
-  cursor: not-allowed;
+  background: none; border-color: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.25); cursor: not-allowed;
 }
 .rl-info {
   font: 10px/1 'Georgia', serif;
-  letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(140,118,190,0.34);
-  margin: 0;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(230,180,140,0.45);
 }
 
 </style>
 </head>
 <body>
+<!-- ── Boot terminal animation ──────────────────────────────────────────────── -->
+<div id="boot-overlay">
+  <div id="boot-terminal"></div>
+</div>
 <canvas id="c"></canvas>
 <button id="snap" title="Save image">
   <!-- exposure ring: track + charging arc -->
@@ -1279,21 +1408,21 @@ body:has(#timer-welcome.visible) #manual-hud-btn { display: none; }
   <div id="manual-content">
 
     <div class="man-transmission">
-      <div class="man-signal">· · ·&nbsp;&nbsp;transmission reçue&nbsp;&nbsp;· · · &nbsp;&nbsp;fréquence inconnue&nbsp;&nbsp;· · ·</div>
-      <div class="man-opening">Tu flottais entre deux galaxies quand ce signal t'a trouvée.</div>
-      <div class="man-tagline">C'est pas un hasard.<br>Des constellations t'attendent, et des cadeaux aussi. <em style="font-style:normal; color:rgba(255,215,100,0.70);">Vrais</em>.</div>
+      <div class="man-signal" id="man-signal"></div>
+      <div class="man-opening" id="man-opening"></div>
+      <div class="man-tagline" id="man-tagline"></div>
     </div>
 
     <div class="man-chapter">
-      <div class="man-heading"><span>I — naviguer</span></div>
-      <p class="man-body">Glisse pour dériver. Pince pour zoomer. Tape l'écran, les étoiles frémiront autour de toi.</p>
-      <p class="man-body">Ce ciel est <em>infini</em> et se referme sur lui-même, comme l'espace. Si tu vas assez loin dans une direction, tu reviens là où t'étais partie. Les couleurs, les nébuleuses, les teintes changent chaque nuit selon la date. Explore. Il y a des choses cachées.</p>
+      <div class="man-heading"><span id="man-ch1-title"></span></div>
+      <p class="man-body" id="man-ch1-p1"></p>
+      <p class="man-body" id="man-ch1-p2"></p>
     </div>
 
     <div class="man-chapter">
-      <div class="man-heading"><span>II — ce qui se cache</span></div>
-      <p class="man-body">Des formes sont dissimulées dans ce ciel. Pas à l'œil nu, il faut <em>zoomer</em> pour les voir apparaître. Quand tu t'approches, un cercle se dessine lentement autour d'elles.</p>
-      <p class="man-body">Touche à l'intérieur du cercle pour les <em>découvrir</em>.</p>
+      <div class="man-heading"><span id="man-ch2-title"></span></div>
+      <p class="man-body" id="man-ch2-p1"></p>
+      <p class="man-body" id="man-ch2-p2"></p>
 
       <div class="man-diagram-row">
         <div class="man-diagram man-diagram-heart" onclick="manHeartPop(event)">
@@ -1325,48 +1454,44 @@ body:has(#timer-welcome.visible) #manual-hud-btn { display: none; }
             <circle cx="111" cy="82"  r="2.3" fill="rgba(255,175,198,0.80)" filter="url(#mf1)" style="animation:man-twinkle 2.9s 0.9s ease-in-out infinite"/>
             <circle cx="74"  cy="122" r="3.2" fill="rgba(255,200,218,0.95)" filter="url(#mf1)" style="animation:man-twinkle 3.8s 2.0s ease-in-out infinite"/>
           </svg>
-          <div class="man-caption">une constellation, zoom requis</div>
+          <div class="man-caption" id="man-ch2-caption"></div>
         </div>
       </div>
 
-      <p class="man-body">Il y en a plusieurs dans ce ciel. Certaines ressemblent à des choses que tu connais. D'autres... moins. Je te dis pas lesquelles. Cherche.</p>
-      <p class="man-body">Quand tu les trouves toutes, quelque chose se passe. Tu verras.</p>
+      <p class="man-body" id="man-ch2-p3"></p>
+      <p class="man-body" id="man-ch2-p4"></p>
     </div>
 
     <div class="man-chapter">
-      <div class="man-heading"><span>III — l'appareil</span></div>
-      <p class="man-body">En bas au centre. <strong>Trois pellicules par nuit.</strong> Appuie et <em>maintiens</em>, l'anneau autour se charge. Quand il devient <em>doré</em>, tu es à saturation. Relâche à ce moment précis pour <strong>×2 poussière ✦</strong>.</p>
-      <p class="man-body">Les photos vont dans ta galerie. Bouton <em>↓</em> pour sauvegarder. Si ta pellicule est vide, un éclat ✧ peut en débloquer une de plus.</p>
+      <div class="man-heading"><span id="man-ch3-title"></span></div>
+      <p class="man-body" id="man-ch3-p1"></p>
+      <p class="man-body" id="man-ch3-p2"></p>
     </div>
 
     <div class="man-chapter">
-      <div class="man-heading"><span>IV — poussière ✦ &amp; éclats ✧</span></div>
-      <p class="man-body">Les photos rapportent de la <em>poussière ✦</em>. Détruire des étoiles aussi. Les <em>éclats ✧</em> tombent parfois quand tu démolis une constellation entière, c'est rare.</p>
-      <p class="man-body">C'est la monnaie de ce ciel. Et elle sert à acheter des <strong>cadeaux</strong>, pas des points, pas des badges. Des choses réelles, que tu peux réclamer pour de vrai.</p>
-      <p class="man-body">Comment ? Découvre une constellation, puis <em>zoome dessus et touche-la à nouveau</em>. Un marché s'ouvre avec ce qui t'attend.</p>
+      <div class="man-heading"><span id="man-ch4-title"></span></div>
+      <p class="man-body" id="man-ch4-p1"></p>
+      <p class="man-body" id="man-ch4-p2"></p>
+      <p class="man-body" id="man-ch4-p3"></p>
     </div>
 
     <div class="man-chapter">
-      <div class="man-heading"><span>V — le bouton</span></div>
-      <div class="man-warning">En bas à droite. L'icône qui ressemble à un atome. Ne le presse pas si tu aimes les étoiles.</div>
-      <p class="man-body">Chaque étoile que tu touches explose. Chaque constellation que tu effaces déclenche une réaction en chaîne, les étoiles s'effondrent une par une, dans le bruit et la lumière. Ça rapporte de la poussière. À toi de décider ce qui compte.</p>
+      <div class="man-heading"><span id="man-ch5-title"></span></div>
+      <div class="man-warning" id="man-ch5-warn"></div>
+      <p class="man-body" id="man-ch5-p1"></p>
     </div>
 
     <div class="man-chapter">
-      <div class="man-heading"><span>VI — le temps</span></div>
-      <p class="man-body"><strong>Cinq minutes par jour.</strong> Le cercle en haut à gauche, quand il devient rouge, c'est presque fini. À minuit le ciel se referme.</p>
-      <p class="man-body">Demain, nouveau ciel. Nouvelles couleurs. Mêmes étoiles. Tes découvertes restent.</p>
-      <p class="man-body" style="font-size:12px; color:rgba(140,175,255,0.38);">Si tu manques de temps, tu peux en acheter un peu plus avec de la poussière ✦.</p>
+      <div class="man-heading"><span id="man-ch6-title"></span></div>
+      <p class="man-body" id="man-ch6-p1"></p>
+      <p class="man-body" id="man-ch6-p2"></p>
+      <p class="man-body" id="man-ch6-p3" style="font-size:12px; color:rgba(140,175,255,0.38);"></p>
     </div>
 
     <div class="man-closing">
       <div class="man-closing-star">✦</div>
-      <div class="man-closing-text">
-        Ce ciel a été construit pour toi.<br>
-        Chaque nuit.<br>
-        Parce que tu mérites quelque chose qui existe juste pour toi.
-      </div>
-      <div class="man-closing-sig">fin de transmission · émetteur : moi ✦</div>
+      <div class="man-closing-text" id="man-closing-text"></div>
+      <div class="man-closing-sig" id="man-closing-sig"></div>
     </div>
 
   </div>
@@ -1418,7 +1543,7 @@ body:has(#timer-welcome.visible) #manual-hud-btn { display: none; }
     <h2 class="te-title">C'est fini AHAHAHAH</h2>
     <p class="te-sub">Les étoiles seront encore là demain, promesse du petit doigt ;)</p>
 
-    <!-- Countdown — visual centrepiece -->
+    <!-- Countdown  /  visual centrepiece -->
     <div class="te-countdown-wrap">
       <div class="te-countdown-label">retour dans</div>
       <div id="te-countdown">-</div>
@@ -1442,7 +1567,7 @@ body:has(#timer-welcome.visible) #manual-hud-btn { display: none; }
       </div>
     </div>
 
-    <div class="te-note">Nuit <span id="te-night-num">1</span> — à demain Louisa ✦</div>
+    <div class="te-note">Nuit <span id="te-night-num">1</span>  /  à demain Louisa ✦</div>
     <button class="te-manual-btn" onclick="document.getElementById('manual-overlay').classList.add('open')">Guide de navigation ?</button>
   </div>
 </div>
@@ -1451,9 +1576,10 @@ body:has(#timer-welcome.visible) #manual-hud-btn { display: none; }
 <div id="roulette-overlay">
   <button class="rl-close-x" id="roulette-close">✕</button>
   <div class="rl-inner">
-    <p class="rl-title">Roue Céleste</p>
+    <span class="rl-eyebrow">✦</span>
+    <h2 class="rl-title">Roue Céleste</h2>
     <p class="rl-sub">la chance sourit aux étoiles perdues</p>
-    <canvas id="roulette-canvas" width="320" height="320"></canvas>
+    <canvas id="roulette-canvas" width="280" height="280"></canvas>
     <div id="roulette-result" class="rl-result"></div>
     <button id="roulette-spin-btn" class="rl-spin-btn">Tourner !</button>
     <p id="roulette-spin-info" class="rl-info">tirage gratuit ✦</p>
@@ -1474,6 +1600,7 @@ function manHeartPop(e) {
 }
 </script>
 
+<script src="js/manual-content.js"></script>
 <script src="js/config.js"></script>
 <script src="js/haptics.js"></script>
 <script src="js/storage.js"></script>
@@ -1491,6 +1618,41 @@ function manHeartPop(e) {
 <script src="js/game.js"></script>
 <script src="js/roulette.js"></script>
 <script src="js/main.js"></script>
+<script src="js/boot.js"></script>
+<script>
+// Inject manual text from js/manual-content.js
+(function() {
+  const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+  set('man-signal',      MANUAL.signal);
+  set('man-opening',     MANUAL.opening);
+  set('man-tagline',     MANUAL.tagline);
+  set('man-ch1-title',   MANUAL.ch1_title);
+  set('man-ch1-p1',      MANUAL.ch1_p1);
+  set('man-ch1-p2',      MANUAL.ch1_p2);
+  set('man-ch2-title',   MANUAL.ch2_title);
+  set('man-ch2-p1',      MANUAL.ch2_p1);
+  set('man-ch2-p2',      MANUAL.ch2_p2);
+  set('man-ch2-caption', MANUAL.ch2_caption);
+  set('man-ch2-p3',      MANUAL.ch2_p3);
+  set('man-ch2-p4',      MANUAL.ch2_p4);
+  set('man-ch3-title',   MANUAL.ch3_title);
+  set('man-ch3-p1',      MANUAL.ch3_p1);
+  set('man-ch3-p2',      MANUAL.ch3_p2);
+  set('man-ch4-title',   MANUAL.ch4_title);
+  set('man-ch4-p1',      MANUAL.ch4_p1);
+  set('man-ch4-p2',      MANUAL.ch4_p2);
+  set('man-ch4-p3',      MANUAL.ch4_p3);
+  set('man-ch5-title',   MANUAL.ch5_title);
+  set('man-ch5-warn',    MANUAL.ch5_warn);
+  set('man-ch5-p1',      MANUAL.ch5_p1);
+  set('man-ch6-title',   MANUAL.ch6_title);
+  set('man-ch6-p1',      MANUAL.ch6_p1);
+  set('man-ch6-p2',      MANUAL.ch6_p2);
+  set('man-ch6-p3',      MANUAL.ch6_p3);
+  set('man-closing-text', MANUAL.closing_text);
+  set('man-closing-sig',  MANUAL.closing_sig);
+})();
+</script>
 
 </body>
 </html>

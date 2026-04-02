@@ -1,4 +1,4 @@
-// ── Roue Céleste — daily lucky wheel ─────────────────────────────────────────
+// ── Roue Céleste  /  daily lucky wheel ─────────────────────────────────────────
 
 const LS_ROULETTE_DAY   = 'nsky_v2_roulette_day';
 const LS_ROULETTE_SPINS = 'nsky_v2_roulette_spins';
@@ -257,7 +257,7 @@ function rlDraw(now) {
     c.stroke();
     c.restore();
 
-    // Prize label — tangential text (rotates with wheel, readable)
+    // Prize label  /  tangential text (rotates with wheel, readable)
     c.save();
     c.translate(cx, cy);
     c.rotate(midA);
@@ -369,9 +369,23 @@ function rlUpdateBtn() {
   } else {
     const ok           = dustTotal >= RL_EXTRA_COST;
     btn.disabled       = !ok;
-    btn.textContent    = `Rejouer  —  ${RL_EXTRA_COST} ✦`;
+    btn.textContent    = `Rejouer   /   ${RL_EXTRA_COST} ✦`;
     infoEl.textContent = ok ? 'Un tirage de plus ✦' : `Il te faut ${RL_EXTRA_COST} ✦`;
   }
+}
+
+// ── canvas sizing ─────────────────────────────────────────────────────────────
+
+function rlResize() {
+  const canvas = document.getElementById('roulette-canvas');
+  if (!canvas) return;
+  // Constrain by width (inner content area) AND height (so content fits on small/landscape screens)
+  const inner = document.querySelector('.rl-inner');
+  const byWidth  = inner ? inner.clientWidth - 48 : Math.min(window.innerWidth, 400) - 48;
+  const byHeight = Math.round(window.innerHeight * 0.44);
+  const size = Math.max(180, Math.min(byWidth, byHeight));
+  canvas.width  = size;
+  canvas.height = size;
 }
 
 // ── open / close ──────────────────────────────────────────────────────────────
@@ -384,6 +398,7 @@ function rouletteOpen() {
   res.textContent = '';
   res.classList.remove('show');
 
+  rlResize();
   document.getElementById('roulette-overlay').classList.add('open');
   rlDraw(performance.now());
   rlUpdateBtn();
@@ -401,5 +416,11 @@ function rouletteClose() {
   document.getElementById('roulette-close').addEventListener('click', rouletteClose);
   document.getElementById('roulette-overlay').addEventListener('click', e => {
     if (e.target === document.getElementById('roulette-overlay')) rouletteClose();
+  });
+  window.addEventListener('resize', () => {
+    if (document.getElementById('roulette-overlay').classList.contains('open')) {
+      rlResize();
+      rlDraw(performance.now());
+    }
   });
 })();

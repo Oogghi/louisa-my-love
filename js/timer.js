@@ -126,9 +126,6 @@ function timerShowWelcome(remaining) {
   const dismiss = () => timerDismissWelcome();
   document.getElementById('tw-enter-btn')
     .addEventListener('click', dismiss, { once: true });
-  setTimeout(() => {
-    if (el.classList.contains('visible')) dismiss();
-  }, 8000);
 }
 
 function timerDismissWelcome() {
@@ -320,7 +317,7 @@ function timerBuyTime() {
   showToast(`✦ +${BUY_MINUTES} minutes accordées`, 3000);
 }
 
-// ── manual overlay freeze (silent — no pause overlay) ─────────────────────────
+// ── manual overlay freeze (silent  /  no pause overlay) ─────────────────────────
 
 let timerFrozenByManual = false;
 
