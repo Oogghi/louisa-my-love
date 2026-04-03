@@ -37,7 +37,7 @@
   const BAR_EMPTY= '          ';
   const BAR_MS   = 600;
 
-  let boost = 1;
+  let boost = localStorage.getItem('nsky_v2_manual_seen') ? 12 : 1;
 
   const overlay  = document.getElementById('boot-overlay');
   const terminal = document.getElementById('boot-terminal');
