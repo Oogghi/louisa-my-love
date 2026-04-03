@@ -146,12 +146,12 @@ function drawBoostEffect(t) {
   ctx.save();
   ctx.globalCompositeOperation = 'screen';
 
-  // 1 — full-screen colour wash (overexposure feel)
+  // 1  /  full-screen colour wash (overexposure feel)
   const washA = fadeOut * (isX2 ? 0.18 : 0.11) * (0.7 + 0.3 * slowPulse);
   ctx.fillStyle = `rgba(${rgb},${washA.toFixed(3)})`;
   ctx.fillRect(0, 0, W, H);
 
-  // 2 — central bloom radiating outward
+  // 2  /  central bloom radiating outward
   const bloomR = Math.max(W, H) * 1.1;
   const bloomA = fadeOut * (isX2 ? 0.28 : 0.18) * (0.6 + 0.4 * slowPulse);
   const bloom  = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, bloomR);
@@ -161,7 +161,7 @@ function drawBoostEffect(t) {
   ctx.fillStyle = bloom;
   ctx.fillRect(0, 0, W, H);
 
-  // 3 — light leaking from all four corners
+  // 3  /  light leaking from all four corners
   const cornerR = Math.min(W, H) * 0.65;
   const cornerA = fadeOut * (isX2 ? 0.30 : 0.20) * (0.5 + 0.5 * fastPulse);
   for (const [cx, cy] of [[0, 0], [W, 0], [0, H], [W, H]]) {
@@ -173,7 +173,7 @@ function drawBoostEffect(t) {
     ctx.fillRect(cx - cornerR, cy - cornerR, cornerR * 2, cornerR * 2);
   }
 
-  // 4 — hard glowing border
+  // 4  /  hard glowing border
   const borderA = fadeOut * (isX2 ? 0.95 : 0.75) * fastPulse;
   ctx.strokeStyle = `rgba(${rgb},${borderA.toFixed(2)})`;
   ctx.lineWidth   = isX2 ? 3.5 : 2.5;
@@ -235,10 +235,10 @@ function drawDustFloats(t) {
 
 const SHOP = {
   heart:     { label: 'Cœur',     icon: '🤗', desc: "Ce que tu veux de RAISONNABLE.",                             price: 380,  fragPrice: 10 },
-  louisa:    { label: 'Louisa',   icon: '💆', desc: "Un massage sans limite de temps, rien que pour toi",          price: 400,  fragPrice: 10 },
-  lily:      { label: 'Lily',     icon: '💐', desc: "Un bouquet de tes fleurs préférées",                          price: 350,  fragPrice: 10 },
-  moon:      { label: 'Lune',     icon: '🎬', desc: "Une soirée ciné à ton choix, avec tous les snacks",           price: 420,  fragPrice: 10 },
-  kiss:      { label: 'Bisou',    icon: '🫦', desc: "Je m'occupe de toi skkskskskskkskkskss",                      price: 300,  fragPrice: 8  },
+  louisa:    { label: 'Louisa',   icon: '💆', desc: "Un bisou",                                                                                    price: 1,    fragPrice: 0  },
+  lily:      { label: 'Lily',     icon: '💐', desc: "Un bouquet de tes fleurs préférées",                                                      price: 650,  fragPrice: 10 },
+  moon:      { label: 'Lune',     icon: '🎬', desc: "Une soirée ciné à ton choix, avec tous les snacks",                                       price: 420,  fragPrice: 10 },
+  kiss:      { label: 'Bisou',    icon: '🫦', desc: "Je viens te voir quand tu le souhaites, même s'il est 1h du matin",                       price: 1000, fragPrice: 8  },
   butterfly: { label: 'Papillon', icon: '✈️', desc: "Des vacances surprise organisées par moi, juste pour toi",   price: 6767, fragPrice: 25 },
   shark:     { label: 'Requin',   icon: '🌊', desc: "Une nuit au bord de la mer pour voir le soleil se coucher",  price: 650,  fragPrice: 15 },
 };
@@ -253,12 +253,14 @@ const SHOP_COLORS = {
 
 function getEffectivePrice(type) {
   const base  = SHOP[type].price;
+  if (type === 'louisa') return base;
   const count = purchases.filter(p => p.type === type).length;
   return Math.round(base * Math.pow(3, count));
 }
 
 function getEffectiveFragPrice(type) {
   const base  = SHOP[type].fragPrice;
+  if (type === 'louisa') return base;
   const count = purchases.filter(p => p.type === type).length;
   return Math.round(base * Math.pow(3, count));
 }
@@ -368,7 +370,7 @@ function tryOpenShop(cx, cy) {
 
 // ── market indicators ─────────────────────────────────────────────────────────
 // A small glowing gem (diamond shape) floats above each live discovered
-// constellation center — clearly signals "something to buy here".
+// constellation center  /  clearly signals "something to buy here".
 
 function drawMarketIndicators(t) {
   if (!discoveredSet.size) return;
@@ -400,7 +402,7 @@ function drawMarketIndicators(t) {
     const floatY = scy - (28 + 3 * Math.sin(t * 1.1 + c.sx * 3.7)) * Math.min(zoomLevel, 2);
     const alpha  = zoomA * (0.55 + 0.25 * pulse);
 
-    // Diamond gem — taller than wide, like a cut jewel
+    // Diamond gem  /  taller than wide, like a cut jewel
     const gh = (7 + 1.5 * pulse) * Math.min(zoomLevel, 2);  // half-height
     const gw = gh * 0.62;                                     // half-width
 
@@ -423,7 +425,7 @@ function drawMarketIndicators(t) {
     ctx.lineWidth   = 1.1;
     ctx.stroke();
 
-    // Inner facet line — horizontal divider through the widest point
+    // Inner facet line  /  horizontal divider through the widest point
     ctx.beginPath();
     ctx.moveTo(scx - gw, floatY);
     ctx.lineTo(scx + gw, floatY);
