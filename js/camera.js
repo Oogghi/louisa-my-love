@@ -134,7 +134,7 @@ function applyTilt(beta, gamma, ref) {
 }
 
 function attachGyroModern() {
-  // RelativeOrientationSensor — supported in Chrome/Android, avoids deprecation
+  // RelativeOrientationSensor  /  supported in Chrome/Android, avoids deprecation
   const sensor = new RelativeOrientationSensor({ frequency: 30, referenceFrame: 'device' });
   let ref = null;
   sensor.addEventListener('reading', () => {
@@ -160,7 +160,7 @@ function attachGyroLegacy() {
 
 function initGyro() {
   if ('RelativeOrientationSensor' in window) {
-    // Generic Sensor API — request permissions then start
+    // Generic Sensor API  /  request permissions then start
     Promise.all([
       navigator.permissions.query({ name: 'accelerometer' }),
       navigator.permissions.query({ name: 'gyroscope' }),
@@ -170,7 +170,7 @@ function initGyro() {
     }).catch(() => attachGyroModern()); // try anyway if permissions API missing
   } else if (typeof DeviceOrientationEvent !== 'undefined' &&
              typeof DeviceOrientationEvent.requestPermission === 'function') {
-    // iOS Safari — requires explicit user gesture to request permission
+    // iOS Safari  /  requires explicit user gesture to request permission
     window.addEventListener('touchstart', () => {
       DeviceOrientationEvent.requestPermission()
         .then(s => { if (s === 'granted') attachGyroLegacy(); })

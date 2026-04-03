@@ -13,13 +13,13 @@ function initAudio() {
   try {
     audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
 
-    // SFX gain node (chimes, explosions) — intentionally quiet
+    // SFX gain node (chimes, explosions)  /  intentionally quiet
     audioGain = audioCtx.createGain();
     audioGain.gain.setValueAtTime(0, audioCtx.currentTime);
     audioGain.gain.linearRampToValueAtTime(0.10, audioCtx.currentTime + 5);
     audioGain.connect(audioCtx.destination);
 
-    // Ambient music — own gain chain, bypasses the quiet SFX gain
+    // Ambient music  /  own gain chain, bypasses the quiet SFX gain
     const ambientEl = new Audio('space_sound.mp3');
     ambientEl.loop = true;
     ambientEl.crossOrigin = 'anonymous';
@@ -34,7 +34,7 @@ function initAudio() {
   } catch(e) {}
 }
 
-// Shared oscillator chord builder — stagger in seconds, peakGain, decay and stop times relative to each note's t0
+// Shared oscillator chord builder  /  stagger in seconds, peakGain, decay and stop times relative to each note's t0
 function _playOscChord(notes, stagger, peakGain, decayAt, stopAt) {
   if (!audioCtx) return;
   notes.forEach((f, i) => {
@@ -55,7 +55,7 @@ function playChime() {
 }
 
 function playAllFoundChime() {
-  _playOscChord([523.25, 659.25, 783.99, 1046.5], 0.22, 0.28, 3.5, 3.8); // C5 E5 G5 C6 — longer, more majestic
+  _playOscChord([523.25, 659.25, 783.99, 1046.5], 0.22, 0.28, 3.5, 3.8); // C5 E5 G5 C6  /  longer, more majestic
 }
 
 // Waveshaper distortion curve (soft-clip saturation)
@@ -84,7 +84,7 @@ function playNukeExplosion(strength) {
   const t0  = audioCtx.currentTime;
   const vol = Math.min(1.4, 0.65 + strength * 0.45);
 
-  // 1 — Sub-bass punch: sine sweep 65 Hz → 22 Hz, gut-punch feel
+  // 1  /  Sub-bass punch: sine sweep 65 Hz → 22 Hz, gut-punch feel
   const sub = audioCtx.createOscillator();
   sub.type = 'sine';
   sub.frequency.setValueAtTime(65, t0);
@@ -96,7 +96,7 @@ function playNukeExplosion(strength) {
   sub.connect(subG); subG.connect(audioGain);
   sub.start(t0); sub.stop(t0 + 2.3);
 
-  // 2 — Hard crack: very short noise burst through distortion + highpass
+  // 2  /  Hard crack: very short noise burst through distortion + highpass
   const crackSrc = _noiseBuffer(0.06);
   const crackHpf = audioCtx.createBiquadFilter();
   crackHpf.type = 'highpass'; crackHpf.frequency.value = 1800;
@@ -108,7 +108,7 @@ function playNukeExplosion(strength) {
   crackSrc.connect(crackHpf); crackHpf.connect(crackDist); crackDist.connect(crackG); crackG.connect(audioGain);
   crackSrc.start(t0);
 
-  // 3 — Body boom: mid-low noise, saturated, long decay
+  // 3  /  Body boom: mid-low noise, saturated, long decay
   const boomSrc  = _noiseBuffer(3.5);
   const boomLpf  = audioCtx.createBiquadFilter();
   boomLpf.type = 'lowpass'; boomLpf.frequency.value = 320; boomLpf.Q.value = 1.8;
@@ -124,7 +124,7 @@ function playNukeExplosion(strength) {
   boomSrc.connect(boomLpf); boomLpf.connect(boomDist); boomDist.connect(boomG); boomG.connect(audioGain);
   boomSrc.start(t0);
 
-  // 4 — Debris whoosh: bandpass noise sweeping downward (like shrapnel flying past)
+  // 4  /  Debris whoosh: bandpass noise sweeping downward (like shrapnel flying past)
   const debSrc = _noiseBuffer(2.2);
   const debBpf = audioCtx.createBiquadFilter();
   debBpf.type = 'bandpass'; debBpf.Q.value = 1.2;
@@ -137,7 +137,7 @@ function playNukeExplosion(strength) {
   debSrc.connect(debBpf); debBpf.connect(debG); debG.connect(audioGain);
   debSrc.start(t0);
 
-  // 5 — High sizzle / plasma crackle (brief fizz right at impact)
+  // 5  /  High sizzle / plasma crackle (brief fizz right at impact)
   const sizzSrc = _noiseBuffer(0.18);
   const sizzHpf = audioCtx.createBiquadFilter();
   sizzHpf.type = 'highpass'; sizzHpf.frequency.value = 6000;
@@ -147,7 +147,7 @@ function playNukeExplosion(strength) {
   sizzSrc.connect(sizzHpf); sizzHpf.connect(sizzG); sizzG.connect(audioGain);
   sizzSrc.start(t0);
 
-  // 6 — Resonant ring: metallic sine that blooms then fades (the "space" quality)
+  // 6  /  Resonant ring: metallic sine that blooms then fades (the "space" quality)
   const ring = audioCtx.createOscillator();
   ring.type = 'sine';
   ring.frequency.setValueAtTime(55 + strength * 18, t0);

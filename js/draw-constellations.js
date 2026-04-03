@@ -127,7 +127,7 @@ function drawConstellations(t) {
     const sc   = CONST_SCALE * c.size;
     const maxR = _constMaxR(c);
 
-    // Per-type colors — computed once per constellation, not per tile
+    // Per-type colors  /  computed once per constellation, not per tile
     const isLily      = c.type === 'lily';
     const isMoon      = c.type === 'moon';
     const isKiss      = c.type === 'kiss';
@@ -174,7 +174,7 @@ function drawConstellations(t) {
     for (let ky = ky0; ky <= ky1; ky++) {
       for (let kx = kx0; kx <= kx1; kx++) {
         const cx = bx + kx * ww, cy = by + ky * wh;
-        // Per-tile nuked dimming — only the destroyed tile goes dim
+        // Per-tile nuked dimming  /  only the destroyed tile goes dim
         const isTileNuked = _isTileNuked(c, kx, ky);
         const opacityMult = isTileNuked ? Math.max(0.15, baseOpacity * 0.20) : baseOpacity;
 

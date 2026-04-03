@@ -38,7 +38,7 @@ function filmUpdateUI() {
 let exposureLevel  = 0;
 let   _expCharging = false;
 let   _expStartT   = 0;
-let   _expOscFreq  = 0.5;   // Hz — randomised on each press
+let   _expOscFreq  = 0.5;   // Hz  /  randomised on each press
 const RING_CIRC    = 207.3;
 
 function updateSnapRing() {
@@ -67,7 +67,7 @@ function init() {
   ctx.scale(dpr, dpr);
   cam.x = cam.y = 0;
 
-  // Night counter first — palette depends on the final nightCount
+  // Night counter first  /  palette depends on the final nightCount
   const today = new Date().toDateString();
   if (localStorage.getItem(LS_DATE) !== today) {
     nightCount++;
@@ -122,7 +122,7 @@ function draw(ts) {
 
   refreshVisibleChunks();
 
-  // Star drift physics — velocity decays with friction, position updates permanently
+  // Star drift physics  /  velocity decays with friction, position updates permanently
   const friction = Math.pow(0.08, dt);
   for (const s of stars) {
     if (!s.driftVx && !s.driftVy) continue;
@@ -154,9 +154,9 @@ function draw(ts) {
   updateConstellationNukes(t);
   drawConstellationNebulae(t);
   drawNukeExplosions(t);
-  drawCosmicRay(t);      // instant flash — drawn late so it's always visible
+  drawCosmicRay(t);      // instant flash  /  drawn late so it's always visible
 
-  // Nightly tint — thin colored lens over the full scene, unique per calendar night
+  // Nightly tint  /  thin colored lens over the full scene, unique per calendar night
   ctx.fillStyle = `rgba(${NIGHT.tintRgb},${NIGHT.tintA.toFixed(3)})`;
   ctx.fillRect(0, 0, W, H);
 
@@ -205,12 +205,12 @@ window.sky = {
   kiss()          { _spawnConstellation('kiss');      showToast('✦ bisou invoqué', 2000); },
   butterfly()     { _spawnConstellation('butterfly'); showToast('✦ papillon invoqué', 2000); },
   shark()         { _spawnConstellation('shark');     showToast('✦ requin invoqué', 2000); },
-  timerReset()    { localStorage.setItem(LS_PLAYTIME, '0'); localStorage.setItem(LS_PLAYDAY, timerGetToday()); timerUsedToday = 0; timerSessionStart = Date.now(); timerExpired = false; timerWarned = false; document.body.classList.remove('sky-expired'); timerUpdateHUD(DAY_LIMIT); document.getElementById('timer-expired').classList.remove('visible'); showToast('Minuterie réinitialisée — 5:00', 2500); },
+  timerReset()    { localStorage.setItem(LS_PLAYTIME, '0'); localStorage.setItem(LS_PLAYDAY, timerGetToday()); timerUsedToday = 0; timerSessionStart = Date.now(); timerExpired = false; timerWarned = false; document.body.classList.remove('sky-expired'); timerUpdateHUD(DAY_LIMIT); document.getElementById('timer-expired').classList.remove('visible'); showToast('Minuterie réinitialisée  /  5:00', 2500); },
   timerFinish()   { timerSave(); timerShowExpired(); },
-  timerSet(mins)  { if (typeof mins !== 'number' || mins < 0) { console.log('Usage: sky.timerSet(minutes) — e.g. sky.timerSet(2)'); return; } const secs = Math.min(DAY_LIMIT, Math.max(0, Math.round(mins * 60))); timerUsedToday = DAY_LIMIT - secs; timerSessionStart = Date.now(); localStorage.setItem(LS_PLAYTIME, String(timerUsedToday)); timerExpired = false; timerWarned = false; timerActive = true; document.body.classList.remove('sky-expired'); document.getElementById('timer-expired').classList.remove('visible'); timerUpdateHUD(secs); showToast(`Minuterie → ${mins} min`, 2500); },
+  timerSet(mins)  { if (typeof mins !== 'number' || mins < 0) { console.log('Usage: sky.timerSet(minutes)  /  e.g. sky.timerSet(2)'); return; } const secs = Math.min(DAY_LIMIT, Math.max(0, Math.round(mins * 60))); timerUsedToday = DAY_LIMIT - secs; timerSessionStart = Date.now(); localStorage.setItem(LS_PLAYTIME, String(timerUsedToday)); timerExpired = false; timerWarned = false; timerActive = true; document.body.classList.remove('sky-expired'); document.getElementById('timer-expired').classList.remove('visible'); timerUpdateHUD(secs); showToast(`Minuterie → ${mins} min`, 2500); },
   nightReset()    { nightCount = 0; localStorage.setItem(LS_NIGHT, '0'); localStorage.removeItem(LS_DATE); initNightPalette(); generateWisps(); refreshHUD(); showToast('Nuit réinitialisée → Nuit 0', 2000); },
-  setNight(n)     { if (typeof n !== 'number' || n < 0) { console.log('Usage: sky.setNight(n) — e.g. sky.setNight(5)'); return; } nightCount = Math.round(n); localStorage.setItem(LS_NIGHT, String(nightCount)); localStorage.setItem(LS_DATE, new Date().toDateString()); initNightPalette(); generateWisps(); refreshHUD(); showToast(`Nuit → ${nightCount}`, 2000); },
-  giveDust(n)            { if (typeof n !== 'number' || n < 0) { console.log('Usage: sky.giveDust(amount) — e.g. sky.giveDust(500)'); return; } earnDust(Math.round(n)); showToast(`✦ +${Math.round(n)} poussière`, 2000); },
+  setNight(n)     { if (typeof n !== 'number' || n < 0) { console.log('Usage: sky.setNight(n)  /  e.g. sky.setNight(5)'); return; } nightCount = Math.round(n); localStorage.setItem(LS_NIGHT, String(nightCount)); localStorage.setItem(LS_DATE, new Date().toDateString()); initNightPalette(); generateWisps(); refreshHUD(); showToast(`Nuit → ${nightCount}`, 2000); },
+  giveDust(n)            { if (typeof n !== 'number' || n < 0) { console.log('Usage: sky.giveDust(amount)  /  e.g. sky.giveDust(500)'); return; } earnDust(Math.round(n)); showToast(`✦ +${Math.round(n)} poussière`, 2000); },
   giveFrag(n=1)          { for (let i = 0; i < Math.round(n); i++) earnFrag(); showToast(`✧ +${Math.round(n)} éclat${n > 1 ? 's' : ''}`, 2000); },
   infiniteRessources()   { earnDust(99999); for (let i = 0; i < 999; i++) earnFrag(); showToast('✦✧ Ressources infinies activées', 2500); },
   help()                 { console.log('sky.shower() | sky.ray() | sky.seism() | sky.nuke() | sky.heart() | sky.louisa() | sky.lily() | sky.moon() | sky.kiss() | sky.butterfly() | sky.shark() | sky.discover(name) | sky.reset() | sky.giveDust(n) | sky.giveFrag(n) | sky.infiniteRessources() | sky.timerReset() | sky.timerFinish() | sky.timerSet(mins) | sky.nightReset() | sky.setNight(n)'); },
@@ -230,7 +230,7 @@ _snapBtn.addEventListener('pointerdown', e => {
       document.getElementById('refill-btn').disabled = false;
       document.getElementById('refill-overlay').classList.add('open');
     } else {
-      showToast('Plus de pellicule — reviens demain ✦', 2500);
+      showToast('Plus de pellicule  /  reviens demain ✦', 2500);
     }
     return;
   }

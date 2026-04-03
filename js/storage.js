@@ -133,7 +133,7 @@ function openGalleryUI(tab) {
     const purchasesList = typeof purchases !== 'undefined' ? purchases : [];
     rwEmpty.style.display = purchasesList.length ? 'none' : 'block';
 
-    // Group by type — multiple purchases stack into one card
+    // Group by type  /  multiple purchases stack into one card
     const grouped = {};
     for (const p of purchasesList) {
       if (!grouped[p.type]) grouped[p.type] = { ...p, count: 0 };

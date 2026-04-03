@@ -1,4 +1,4 @@
-// ── seeded PRNG (mulberry32) — stable star positions per night ────────────────
+// ── seeded PRNG (mulberry32)  /  stable star positions per night ────────────────
 
 function mulberry32(seed) {
   let a = (seed * 1664525 + 1013904223) >>> 0;
@@ -13,11 +13,11 @@ function mulberry32(seed) {
 // ── star colors ────────────────────────────────────────────────────────────────
 
 const STAR_COL = [
-  '155,185,255', // 0 blue-white  (O/B — hot, rare)
-  '255,255,255', // 1 white        (A/F — common)
-  '255,252,225', // 2 yellow-white (G   — sun-like)
-  '255,210,140', // 3 orange       (K   — cooler)
-  '255,128,60',  // 4 red-orange   (M giant — rare, large)
+  '155,185,255', // 0 blue-white  (O/B  /  hot, rare)
+  '255,255,255', // 1 white        (A/F  /  common)
+  '255,252,225', // 2 yellow-white (G    /  sun-like)
+  '255,210,140', // 3 orange       (K    /  cooler)
+  '255,128,60',  // 4 red-orange   (M giant  /  rare, large)
 ];
 function pickColorType(r) {
   if (r < 0.03) return 0;
@@ -96,27 +96,27 @@ const PATTERNS = {
       {x:  71, y: -71, b:0.88, col:'blood'},  // 21
       {x:  87, y: -50, b:0.90, col:'blood'},  // 22
       {x:  97, y: -26, b:0.95, col:'blood'},  // 23
-      // ── Mare Imbrium — large, irregular dark region, upper-left ───────────
+      // ── Mare Imbrium  /  large, irregular dark region, upper-left ───────────
       {x: -10, y: -55, b:0.68, col:'ember'},  // 24
       {x: -35, y: -48, b:0.65, col:'ember'},  // 25
       {x: -55, y: -32, b:0.68, col:'ember'},  // 26
       {x: -60, y:  -8, b:0.62, col:'ember'},  // 27
       {x: -48, y:  12, b:0.65, col:'ember'},  // 28
       {x: -20, y: -15, b:0.60, col:'ember'},  // 29
-      // ── Mare Tranquilitatis — smaller, center-right ────────────────────────
+      // ── Mare Tranquilitatis  /  smaller, center-right ────────────────────────
       {x:  20, y: -22, b:0.68, col:'ember'},  // 30
       {x:  42, y: -15, b:0.65, col:'ember'},  // 31
       {x:  44, y:   8, b:0.62, col:'ember'},  // 32
       {x:  22, y:  12, b:0.65, col:'ember'},  // 33
-      // ── Tycho crater — lower-center-right ─────────────────────────────────
+      // ── Tycho crater  /  lower-center-right ─────────────────────────────────
       {x:  16, y:  48, b:0.80, col:'blood'},  // 34
       {x:  38, y:  40, b:0.75, col:'blood'},  // 35
       {x:  28, y:  60, b:0.78, col:'blood'},  // 36
-      // ── Tycho ray tips — radiating outward ────────────────────────────────
-      {x:  -2, y:  28, b:0.58, col:'halo'},   // 37 — ray toward center
-      {x:  56, y:  22, b:0.56, col:'halo'},   // 38 — ray toward right
-      {x:  50, y:  68, b:0.58, col:'halo'},   // 39 — ray toward lower-right
-      // ── Aristarchus — bright isolated hot spot, upper-right ────────────────
+      // ── Tycho ray tips  /  radiating outward ────────────────────────────────
+      {x:  -2, y:  28, b:0.58, col:'halo'},   // 37  /  ray toward center
+      {x:  56, y:  22, b:0.56, col:'halo'},   // 38  /  ray toward right
+      {x:  50, y:  68, b:0.58, col:'halo'},   // 39  /  ray toward lower-right
+      // ── Aristarchus  /  bright isolated hot spot, upper-right ────────────────
       {x:  50, y: -58, b:0.82, col:'blood'},  // 40
       // ── center glow ────────────────────────────────────────────────────────
       {x:   0, y:   0, b:0.88, col:'core'},   // 41
@@ -138,7 +138,7 @@ const PATTERNS = {
   kiss: {
     jitter: 7,
     stars: [
-      // upper lip — cupid's bow (left→right)
+      // upper lip  /  cupid's bow (left→right)
       {x: -78, y:   0, b:0.9,  col:'rose'},   // 0  left corner
       {x: -54, y: -16, b:0.8},                // 1  left flare
       {x: -27, y: -30, b:0.95, col:'rose'},   // 2  left peak
@@ -146,7 +146,7 @@ const PATTERNS = {
       {x:  27, y: -30, b:0.95, col:'rose'},   // 4  right peak
       {x:  54, y: -16, b:0.8},                // 5  right flare
       {x:  78, y:   0, b:0.9,  col:'rose'},   // 6  right corner
-      // lower lip — full rounded arc
+      // lower lip  /  full rounded arc
       {x: -54, y:  18, b:0.8},                // 7  lower-left curve
       {x: -28, y:  40, b:0.85},               // 8  lower-left side
       {x:   0, y:  52, b:1.0,  col:'rose'},   // 9  bottom center

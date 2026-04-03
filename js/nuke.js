@@ -40,7 +40,7 @@ function triggerNukeExplosion(px, py, star, t) {
   const [ox, oy] = screenToWorld(px, py);
   const depth    = star.depth || 1;
 
-  // Particles — three types: fast sparks, core debris, slow embers
+  // Particles  /  three types: fast sparks, core debris, slow embers
   const count = Math.round(22 + strength * 58);
   const particles = [];
   for (let i = 0; i < count; i++) {
@@ -105,7 +105,7 @@ function getConstellationStarScreen(c, starIdx) {
   return worldToScreen(cx + star.x * sc, cy + star.y * sc);
 }
 
-// Stable per-tile key — invariant under camera panning.
+// Stable per-tile key  /  invariant under camera panning.
 // N = kx - floor((c.sx * ww - panX * depth + cam.x * depth) / ww) identifies
 // which physical repeat of the constellation tile (kx, ky) corresponds to.
 function _constTileKey(c, kx, ky) {
@@ -130,7 +130,7 @@ function nukeConstellation(constType, tileKx, tileKy, hitPx, hitPy, t) {
   if (tileSet.has(tileKey)) return;
   tileSet.add(tileKey);
 
-  // Lump-sum dust for destroying the whole constellation — capped at 10
+  // Lump-sum dust for destroying the whole constellation  /  capped at 10
   const total = Math.min(10, Math.round(
     c.stars.reduce((sum, s) => sum + Math.max(1, Math.round((0.5 + s.b * 1.3) * 1.2)), 0)
     * dustMult
@@ -230,7 +230,7 @@ function fireNuke(cx, cy, t) {
   if (t - _lastNukeT < 0.6) return;
   _lastNukeT = t;
 
-  // Check constellation stars first — clicking any star of a constellation nukes it
+  // Check constellation stars first  /  clicking any star of a constellation nukes it
   let constHit = null, constBestDist = 45;
   for (const entry of _constStarPositions) {
     const d = Math.hypot(cx - entry.sx, cy - entry.sy);
@@ -307,7 +307,7 @@ function drawNukeExplosions(t) {
 
     try {
 
-    // 1 ── Initial flash — big, saturating, longer than before
+    // 1 ── Initial flash  /  big, saturating, longer than before
     if (age < 0.26) {
       const fl = age / 0.26;
       const fr = Math.max(1, e.r * (0.05 + fl * 2.2));

@@ -1,6 +1,6 @@
 // ── nightly sky palette ────────────────────────────────────────────────────────
 // Evolves slowly each calendar night so every visit feels subtly unique.
-// All values are deterministic from nightCount — no randomness here.
+// All values are deterministic from nightCount  /  no randomness here.
 
 let NIGHT = {};
 
@@ -32,12 +32,12 @@ function initNightPalette() {
             Math.round(ch(h - 1/3) * 255)];
   }
 
-  // Full-screen tint — colored lens over the entire scene
+  // Full-screen tint  /  colored lens over the entire scene
   const [tr, tg, tb] = hsl(hue, 55, 12);
   NIGHT.tintRgb = `${tr},${tg},${tb}`;
   NIGHT.tintA   = 0.07 + mood * 0.09 + r2 * 0.05;
 
-  // Wisp color family — five hues orbiting tonight's base hue
+  // Wisp color family  /  five hues orbiting tonight's base hue
   NIGHT.wispColors = [
     hsl(hue,               75, 28),
     hsl((hue +  45) % 360, 65, 24),
@@ -46,7 +46,7 @@ function initNightPalette() {
     hsl((hue + 230) % 360, 68, 27),
   ];
 
-  // Galaxy smudge tint — shifts from warm-white toward tonight's hue (stays pale)
+  // Galaxy smudge tint  /  shifts from warm-white toward tonight's hue (stays pale)
   const [sr, sg, sb] = hsl((hue + 25) % 360, 20 + mood * 10, 95);
   NIGHT.smudgeRgb = `${sr},${sg},${sb}`;
 }
