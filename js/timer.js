@@ -375,11 +375,36 @@ function timerTick() {
 
   if (remaining <= 0) {
     timerSave();
+    timerHideCountdown();
     timerShowExpired();
   } else if (remaining <= 60 && !timerWarned) {
     timerWarned = true;
     showToast('✦  Plus qu\'une minute, profite !', 4000);
   }
+
+  // Last-10-seconds countdown
+  const cdEl    = document.getElementById('timer-countdown');
+  const digitEl = document.getElementById('timer-countdown-digit');
+  if (cdEl && digitEl) {
+    if (remaining > 0 && remaining <= 10) {
+      const digit = String(Math.ceil(remaining));
+      if (digitEl.textContent !== digit) {
+        digitEl.textContent = digit;
+        cdEl.classList.remove('pulse');
+        void cdEl.offsetWidth; // reflow to restart animation
+        cdEl.classList.add('visible', 'pulse');
+      }
+    } else {
+      timerHideCountdown();
+    }
+  }
+}
+
+function timerHideCountdown() {
+  const cdEl    = document.getElementById('timer-countdown');
+  const digitEl = document.getElementById('timer-countdown-digit');
+  if (cdEl)    cdEl.classList.remove('visible', 'pulse');
+  if (digitEl) digitEl.textContent = '';
 }
 
 // ── init ──────────────────────────────────────────────────────────────────────

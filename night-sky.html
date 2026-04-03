@@ -710,6 +710,39 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
   border-radius: 20px; padding: 2px 8px;
 }
 
+/* ── Last-10-seconds countdown ──────────────────────────────────────────────── */
+#timer-countdown {
+  position: fixed; inset: 0; z-index: 40;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  pointer-events: none;
+  opacity: 0; transition: opacity 0.9s ease;
+}
+#timer-countdown.visible { opacity: 1; }
+#timer-countdown::before {
+  content: '';
+  position: absolute;
+  width: 260px; height: 260px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(200,140,110,0.055) 0%, transparent 70%);
+  pointer-events: none;
+}
+#timer-countdown-digit {
+  font: italic normal clamp(52px, 12vw, 80px)/1 'Georgia', serif;
+  color: rgba(238, 212, 168, 0.80);
+  letter-spacing: 0.08em;
+  position: relative; z-index: 1;
+  text-shadow:
+    0 0 3px  rgba(255, 245, 200, 0.55),
+    0 0 18px rgba(215, 170, 120, 0.35),
+    0 0 55px rgba(175, 120,  90, 0.18);
+}
+@keyframes cdAppear {
+  0%   { opacity: 0; transform: translateY(-12px) scale(0.93); }
+  100% { opacity: 1; transform: translateY(0)     scale(1);    }
+}
+#timer-countdown.pulse #timer-countdown-digit {
+  animation: cdAppear 0.70s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 /* ── Pause overlay ────────────────────────────────────────────────────────────── */
 #pause-overlay {
   display: none; position: fixed; inset: 0; z-index: 50;
@@ -1572,13 +1605,16 @@ body:has(#timer-welcome.visible) #manual-hud-btn { display: none; }
   </div>
 </div>
 
+<!-- ── Last-10-seconds countdown ────────────────────────────────────────── -->
+<div id="timer-countdown"><span id="timer-countdown-digit"></span></div>
+
 <!-- ── Roue Céleste overlay ───────────────────────────────────────────────── -->
 <div id="roulette-overlay">
   <button class="rl-close-x" id="roulette-close">✕</button>
   <div class="rl-inner">
     <span class="rl-eyebrow">✦</span>
     <h2 class="rl-title">Roue Céleste</h2>
-    <p class="rl-sub">la chance sourit aux étoiles perdues</p>
+    <p class="rl-sub">tente ta chance ma loulou d'amour</p>
     <canvas id="roulette-canvas" width="280" height="280"></canvas>
     <div id="roulette-result" class="rl-result"></div>
     <button id="roulette-spin-btn" class="rl-spin-btn">Tourner !</button>
