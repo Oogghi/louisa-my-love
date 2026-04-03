@@ -26,7 +26,7 @@ function initAudio() {
     const ambientSrc = audioCtx.createMediaElementSource(ambientEl);
     const ambientGain = audioCtx.createGain();
     ambientGain.gain.setValueAtTime(0, audioCtx.currentTime);
-    ambientGain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 5);
+    ambientGain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 5);
     ambientSrc.connect(ambientGain);
     ambientGain.connect(audioCtx.destination);
     ambientEl.play().catch(() => {});
@@ -82,7 +82,7 @@ function _noiseBuffer(seconds) {
 function playNukeExplosion(strength) {
   if (!audioCtx) return;
   const t0  = audioCtx.currentTime;
-  const vol = Math.min(1.4, 0.65 + strength * 0.45);
+  const vol = Math.min(0.5, 0.22 + strength * 0.16);
 
   // 1  /  Sub-bass punch: sine sweep 65 Hz → 22 Hz, gut-punch feel
   const sub = audioCtx.createOscillator();

@@ -261,7 +261,7 @@ function _doSnap() {
 
   // Apply dust multiplier based on how close to peak the exposure was
   const isPeak = captured >= 0.82;
-  activateDustMult(isPeak ? 2.0 : 1.5, 10);
+  activateDustMult(isPeak ? 5.0 : 3.0, 15);
 
   canvas.toBlob(blob => galSavePhoto(blob, captured), 'image/png');
 }

@@ -2,42 +2,16 @@
 
 (function () {
 
-  const LINES = [
-    { text: "louisa_je_t'aime.exe  -  version 3.04.26", header: true },
-    { text: '--------------------------------'                         },
-    { text: '> boot sequence initiated...'                            },
-    { text: '> chargement du ciel étoilé',   bar:  true              },
-    { text: '> calibration des nébuleuses',  bar:  true              },
-    { text: '> génération de l\'amour',      bar:  true              },
-    { text: '> montage de l\'espace',        bar:  true              },
-    { text: '> injection de poussière',      bar:  true              },
-    { text: '> vérification des étoiles',    bar:  true              },
-    { text: ''                                                        },
-    { text: '> chargement de mon amour',     love: true              },
-  ];
+  const LINES     = BOOT_LINES;
+  const LOVE_PCTS = BOOT_LOVE_PCTS;
 
-  // Percentage steps for the love sequence
-  const LOVE_PCTS = [
-    { val: '10%',   delay: 520 },
-    { val: '25%',   delay: 420 },
-    { val: '30%',   delay: 260 },
-    { val: '50%',   delay: 500 },
-    { val: '67%',   delay: 380 },
-    { val: '80%',   delay: 310 },
-    { val: '99%',   delay: 700 },
-    { val: '100%',  delay: 900 },
-    { val: '300%',  delay: 240 },
-    { val: '1000%', delay: 300 },
-    { val: 'infini%', delay: 420 },
-  ];
-
-  const CHAR_MS  = 38;
+  const CHAR_MS  = 50;
   const BAR_LEN  = 10;
   const BAR_FULL = '##########';
   const BAR_EMPTY= '          ';
   const BAR_MS   = 600;
 
-  let boost = localStorage.getItem('nsky_v2_manual_seen') ? 12 : 1;
+  let boost = localStorage.getItem('nsky_v2_manual_seen') ? 3 : 1;
 
   const overlay  = document.getElementById('boot-overlay');
   const terminal = document.getElementById('boot-terminal');
@@ -65,12 +39,19 @@
     setTimeout(step, CHAR_MS / boost);
   }
 
-  function fillBar(barEl, closeEl, onDone) {
+  function fillBar(barEl, closeEl, doneLabel, doneColor, onDone) {
     let filled = 0;
     function step() {
       filled++;
       barEl.textContent = BAR_FULL.slice(0, filled) + BAR_EMPTY.slice(filled);
-      if (filled >= BAR_LEN) { closeEl.textContent = ']  done'; onDone(); }
+      if (filled >= BAR_LEN) {
+        const span = document.createElement('span');
+        span.style.color = doneColor;
+        span.textContent = '  ' + doneLabel;
+        closeEl.textContent = ']';
+        closeEl.appendChild(span);
+        onDone();
+      }
       else setTimeout(step, (BAR_MS / BAR_LEN) / boost);
     }
     setTimeout(step, (BAR_MS / BAR_LEN) / boost);
@@ -102,7 +83,7 @@
       return;
     }
 
-    const { text, bar, header, love } = LINES[index];
+    const { text, bar, header, love, done: doneLabel = 'done', doneColor = '#44ff88' } = LINES[index];
     const isLast = index === LINES.length - 1;
 
     const lineEl = document.createElement('div');
@@ -140,7 +121,7 @@
         closeEl.textContent = ']';
         lineEl.appendChild(closeEl);
         lineEl.appendChild(cursorEl);
-        fillBar(barEl, closeEl, () => {
+        fillBar(barEl, closeEl, doneLabel, doneColor, () => {
           cursorEl.remove();
           setTimeout(() => runLine(index + 1), 55 / boost);
         });

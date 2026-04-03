@@ -85,9 +85,9 @@ function activateDustMult(mult, secs) {
   updateDustHUD();
   _boostBorn = performance.now() * 0.001;
   _boostMult = mult;
-  const label = mult >= 2
-    ? 'Parfait ! ×2 poussière pendant 10s ✦'
-    : '×1.5 poussière pendant 10s ✦';
+  const label = mult >= 5
+    ? 'Parfait ! ×5 poussière pendant 15s ✦'
+    : '×3 poussière pendant 15s ✦';
   showToast(label, 2600);
 }
 
@@ -97,8 +97,8 @@ let _boostBorn = -999;
 let _boostMult = 1;
 
 function drawBoostEffect(t) {
-  const isX2  = _boostMult >= 2;
-  const rgb   = isX2 ? '255,210,50' : '110,185,255';
+  const isX2  = _boostMult >= 5;
+  const rgb   = isX2 ? '255,190,80' : '110,185,255';
   const snapY = H * 0.88;
 
   // ── initial burst animation ───────────────────────────────────────────────
@@ -147,13 +147,13 @@ function drawBoostEffect(t) {
   ctx.globalCompositeOperation = 'screen';
 
   // 1  /  full-screen colour wash (overexposure feel)
-  const washA = fadeOut * (isX2 ? 0.18 : 0.11) * (0.7 + 0.3 * slowPulse);
+  const washA = fadeOut * (isX2 ? 0.07 : 0.04) * (0.7 + 0.3 * slowPulse);
   ctx.fillStyle = `rgba(${rgb},${washA.toFixed(3)})`;
   ctx.fillRect(0, 0, W, H);
 
   // 2  /  central bloom radiating outward
   const bloomR = Math.max(W, H) * 1.1;
-  const bloomA = fadeOut * (isX2 ? 0.28 : 0.18) * (0.6 + 0.4 * slowPulse);
+  const bloomA = fadeOut * (isX2 ? 0.10 : 0.06) * (0.6 + 0.4 * slowPulse);
   const bloom  = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, bloomR);
   bloom.addColorStop(0,    `rgba(${rgb},${bloomA.toFixed(3)})`);
   bloom.addColorStop(0.35, `rgba(${rgb},${(bloomA * 0.55).toFixed(3)})`);
@@ -163,7 +163,7 @@ function drawBoostEffect(t) {
 
   // 3  /  light leaking from all four corners
   const cornerR = Math.min(W, H) * 0.65;
-  const cornerA = fadeOut * (isX2 ? 0.30 : 0.20) * (0.5 + 0.5 * fastPulse);
+  const cornerA = fadeOut * (isX2 ? 0.10 : 0.06) * (0.5 + 0.5 * fastPulse);
   for (const [cx, cy] of [[0, 0], [W, 0], [0, H], [W, H]]) {
     const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, cornerR);
     cg.addColorStop(0,   `rgba(${rgb},${cornerA.toFixed(3)})`);
@@ -174,10 +174,10 @@ function drawBoostEffect(t) {
   }
 
   // 4  /  hard glowing border
-  const borderA = fadeOut * (isX2 ? 0.95 : 0.75) * fastPulse;
+  const borderA = fadeOut * (isX2 ? 0.40 : 0.28) * fastPulse;
   ctx.strokeStyle = `rgba(${rgb},${borderA.toFixed(2)})`;
   ctx.lineWidth   = isX2 ? 3.5 : 2.5;
-  ctx.shadowColor = `rgba(${rgb},${(fadeOut * 0.8).toFixed(2)})`;
+  ctx.shadowColor = `rgba(${rgb},${(fadeOut * 0.35).toFixed(2)})`;
   ctx.shadowBlur  = isX2 ? 18 : 12;
   ctx.strokeRect(2, 2, W - 4, H - 4);
 

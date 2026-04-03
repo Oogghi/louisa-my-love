@@ -132,6 +132,7 @@ function timerDismissWelcome() {
   const el = document.getElementById('timer-welcome');
   if (!el || !el.classList.contains('visible')) return;
   el.classList.add('dismissing');
+  initAudio();
   setTimeout(() => {
     el.style.display   = 'none';
     el.classList.remove('visible', 'dismissing');
