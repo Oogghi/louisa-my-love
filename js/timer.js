@@ -344,31 +344,23 @@ function timerUnfreezeForManual() {
   timerSessionStart   = Date.now();
 }
 
-// ── pause / resume ────────────────────────────────────────────────────────────
+// ── home button (return to welcome screen) ────────────────────────────────────
 
-let timerPaused = false;
-
-function timerPause() {
-  if (!timerActive || timerExpired || timerPaused) return;
-  // Absorb elapsed time so remaining is preserved correctly on resume
+function timerGoHome() {
+  if (!timerActive || timerExpired) return;
   if (timerSessionStart) {
-    timerUsedToday += (Date.now() - timerSessionStart) / 1000;
+    timerUsedToday   += (Date.now() - timerSessionStart) / 1000;
     timerSessionStart = null;
   }
   timerActive = false;
-  timerPaused = true;
 
-  const remaining = Math.max(0, DAY_LIMIT - timerUsedToday);
-  document.getElementById('pause-remaining').textContent = timerFmtMS(remaining);
-  document.getElementById('pause-overlay').classList.add('open');
-}
-
-function timerResume() {
-  if (!timerPaused) return;
-  timerPaused       = false;
-  timerActive       = true;
-  timerSessionStart = Date.now();
-  document.getElementById('pause-overlay').classList.remove('open');
+  const el = document.getElementById('timer-welcome');
+  if (!el) return;
+  el.style.display = '';
+  timerUpdateWelcomeArc(timerSecondsRemaining());
+  setTimeout(() => el.classList.add('visible'), 30);
+  document.getElementById('tw-enter-btn')
+    .addEventListener('click', () => timerDismissWelcome(), { once: true });
 }
 
 // ── tick (every second) ───────────────────────────────────────────────────────
@@ -426,8 +418,7 @@ function initTimer() {
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') timerTick();
   });
-  document.getElementById('timer-hud').addEventListener('click', timerPause);
-  document.getElementById('pause-resume-btn').addEventListener('click', timerResume);
+  document.getElementById('home-btn').addEventListener('click', timerGoHome);
 
   if (remaining <= 0) {
     timerShowExpired();
