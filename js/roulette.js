@@ -140,7 +140,7 @@ function rlApplyReward(prize) {
   _rlWinTime = performance.now();
   rlSpawnParticles(prize);
 
-  if (r.time) { rlGrantTime(r.time); return; }
+  if (r.time) { rlSaveTimeReward(r.time); return; }
 
   const msg = rlBuildMsg(prize);
   const res = document.getElementById('roulette-result');
@@ -155,6 +155,21 @@ function rlApplyReward(prize) {
   if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate([40, 30, 80]);
   rlUpdateBtn();
   requestAnimationFrame(rlAnimate); // keep drawing for particle animation
+}
+
+function rlSaveTimeReward(secs) {
+  const mins = Math.round(secs / 60);
+  const pw = { r: 'roulette_time_' + Date.now(), m: mins, d: 0, f: 0, s: 0, desc: `+${mins} min` };
+  const pending = JSON.parse(localStorage.getItem('ns_pending_rewards') || '[]');
+  pending.push(pw);
+  localStorage.setItem('ns_pending_rewards', JSON.stringify(pending));
+
+  const res = document.getElementById('roulette-result');
+  if (res) { res.textContent = `+${mins} min → inventaire ✦`; res.classList.add('show'); }
+  showToast(`⏱  +${mins} min dans ton inventaire`, 3500);
+  if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate([40, 30, 80]);
+  rlUpdateBtn();
+  requestAnimationFrame(rlAnimate);
 }
 
 function rlGrantTime(secs) {
