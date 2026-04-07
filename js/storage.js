@@ -156,6 +156,26 @@ function openGalleryUI(tab) {
       rwGrid.appendChild(card);
     });
 
+    // ── Pending URL rewards ─────────────────────────────────────────────────
+    const pendingRw = JSON.parse(localStorage.getItem('ns_pending_rewards') || '[]');
+    if (pendingRw.length) {
+      rwEmpty.style.display = 'none';
+      for (const pw of pendingRw) {
+        const card = document.createElement('div'); card.className = 'reward-card';
+        const ico  = document.createElement('div'); ico.className = 'reward-icon'; ico.textContent = '🎁';
+        const lbl  = document.createElement('div'); lbl.className = 'reward-label'; lbl.textContent = 'Récompense';
+        const desc = document.createElement('div'); desc.className = 'reward-desc'; desc.textContent = pw.desc;
+        const btn  = document.createElement('button'); btn.className = 'reward-claim-btn'; btn.textContent = 'Réclamer';
+        btn.addEventListener('click', () => {
+          if (typeof applyUrlReward === 'function') applyUrlReward(pw);
+          card.remove();
+          if (!rwGrid.children.length) rwEmpty.style.display = 'block';
+        });
+        card.append(ico, lbl, desc, btn);
+        rwGrid.appendChild(card);
+      }
+    }
+
     document.getElementById('gallery').classList.add('open');
     switchGalleryTab(targetTab);
   });

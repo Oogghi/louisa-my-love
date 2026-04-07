@@ -30,7 +30,7 @@ function timerLoad() {
 function timerSave() {
   if (!timerSessionStart) return;
   const elapsed = (Date.now() - timerSessionStart) / 1000;
-  const total   = Math.min(DAY_LIMIT, timerUsedToday + elapsed);
+  const total   = timerUsedToday + elapsed;
   localStorage.setItem(LS_PLAYTIME, String(Math.round(total)));
 }
 
@@ -54,8 +54,9 @@ function timerFmtMS(secs) {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
-// Color shifts: blue → amber → red as time runs out
+// Color shifts: gold (over limit) → blue → amber → red as time runs out
 function timerArcColor(fraction) {
+  if (fraction > 1) return 'rgb(255, 210, 60)';
   if (fraction > 0.5) {
     const t = (fraction - 0.5) / 0.5;            // 1→0 as fraction goes 1→0.5
     const r = Math.round(150 + 105 * (1 - t));
@@ -73,19 +74,22 @@ function timerArcColor(fraction) {
 // ── HUD arc ───────────────────────────────────────────────────────────────────
 
 function timerUpdateHUD(remaining) {
-  const fraction = remaining / DAY_LIMIT;
-  const arcEl    = document.getElementById('timer-arc');
-  const textEl   = document.getElementById('timer-time');
+  const fraction    = remaining / DAY_LIMIT;
+  const arcEl       = document.getElementById('timer-arc');
+  const textEl      = document.getElementById('timer-time');
   if (!arcEl || !textEl) return;
 
   textEl.textContent = timerFmtMS(remaining);
-  arcEl.style.strokeDasharray = `${HUD_CIRC * fraction} ${HUD_CIRC}`;
+  const displayFrac  = Math.min(1, fraction);
+  arcEl.style.strokeDasharray = `${HUD_CIRC * displayFrac} ${HUD_CIRC}`;
   const col = timerArcColor(fraction);
   arcEl.style.stroke = col;
 
   const hudEl = document.getElementById('timer-hud');
   if (!hudEl) return;
-  if (fraction < 0.167) {
+  if (fraction > 1) {
+    hudEl.style.filter = `drop-shadow(0 0 10px rgba(255,210,50,0.85))`;
+  } else if (fraction < 0.167) {
     hudEl.style.filter = `drop-shadow(0 0 7px ${col})`;
   } else if (fraction < 0.33) {
     hudEl.style.filter = `drop-shadow(0 0 3px ${col})`;
@@ -100,8 +104,9 @@ function timerUpdateWelcomeArc(remaining) {
   const arc    = document.getElementById('tw-arc');
   const timeEl = document.getElementById('tw-time-text');
   if (!arc || !timeEl) return;
-  const frac = remaining / DAY_LIMIT;
-  arc.style.strokeDasharray = `${WLCM_CIRC * frac} ${WLCM_CIRC}`;
+  const frac        = remaining / DAY_LIMIT;
+  const displayFrac = Math.min(1, frac);
+  arc.style.strokeDasharray = `${WLCM_CIRC * displayFrac} ${WLCM_CIRC}`;
   arc.style.stroke = timerArcColor(frac);
   timeEl.textContent = timerFmtMS(remaining);
 }
@@ -299,9 +304,9 @@ function timerBuyTime() {
 
   // Absorb elapsed time then give extra time
   if (timerSessionStart) {
-    timerUsedToday = Math.min(DAY_LIMIT, timerUsedToday + (Date.now() - timerSessionStart) / 1000);
+    timerUsedToday += (Date.now() - timerSessionStart) / 1000;
   }
-  timerUsedToday    = Math.max(0, timerUsedToday - BUY_MINUTES * 60);
+  timerUsedToday -= BUY_MINUTES * 60;
   timerSessionStart = Date.now();
   localStorage.setItem(LS_PLAYTIME, String(Math.round(timerUsedToday)));
 

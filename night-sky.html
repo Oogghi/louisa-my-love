@@ -267,6 +267,13 @@ canvas { position: fixed; top: 0; left: 0; touch-action: none; cursor: grab; }
     0 0 20px rgba(255,255,255,0.35);
 }
 .bt-bar { color: rgba(255,255,255,0.28); text-shadow: none; }
+.bt-gold {
+  color: rgba(255,210,60,0.95) !important;
+  text-shadow:
+    0 0 4px  rgba(255,210,60,1),
+    0 0 14px rgba(255,200,40,0.75),
+    0 0 40px rgba(255,180,30,0.30) !important;
+}
 .bt-love-pct {
   text-shadow:
     0 0 4px  rgba(255,255,255,1),
@@ -1284,6 +1291,87 @@ body:has(#timer-welcome.visible) #manual-hud-btn { display: none; }
   color: rgba(230,180,140,0.45);
 }
 
+/* ── Welcome screen inventory button ────────────────────────────────────── */
+#tw-inventory-btn {
+  background: none; border: 1px solid rgba(255,185,130,0.18); border-radius: 20px;
+  padding: 8px 22px; color: rgba(230,180,140,0.50);
+  font: 10px/1 'Georgia', serif; letter-spacing: 0.18em; text-transform: uppercase;
+  cursor: pointer; margin-top: 10px;
+  transition: border-color 0.3s, color 0.3s;
+}
+#tw-inventory-btn:hover { border-color: rgba(255,185,130,0.45); color: rgba(255,215,180,0.85); }
+
+/* ── Pending reward claim button (inside inventory card) ─────────────────── */
+.reward-claim-btn {
+  margin-top: 12px; width: 100%;
+  background: rgba(255,225,100,0.07);
+  border: 1px solid rgba(255,225,100,0.35); border-radius: 10px;
+  padding: 9px 18px;
+  font: 12px 'Georgia', serif; letter-spacing: 0.10em;
+  color: rgba(255,225,100,0.85);
+  cursor: pointer; transition: all 0.25s ease;
+}
+.reward-claim-btn:hover {
+  background: rgba(255,225,100,0.15); border-color: rgba(255,225,100,0.65);
+  color: rgba(255,240,180,1);
+}
+
+/* ── URL reward claim modal ───────────────────────────────────────────────── */
+#url-reward-overlay {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,1,10,0.90); backdrop-filter: blur(25px);
+  align-items: center; justify-content: center;
+  font-family: 'Georgia', serif;
+}
+#url-reward-overlay.open { display: flex; animation: overlayFadeIn 0.5s cubic-bezier(0.2, 0, 0.2, 1) forwards; }
+#url-reward-card {
+  background: rgba(4,5,22,0.99);
+  border: 1px solid rgba(255,225,100,0.28);
+  border-radius: 24px;
+  padding: 44px 32px 36px;
+  max-width: 340px; width: 92%;
+  text-align: center;
+  box-shadow: 0 0 120px rgba(255,200,50,0.12), 0 20px 70px rgba(0,0,0,0.5);
+  position: relative; overflow: hidden;
+}
+#url-reward-card::before {
+  content: '';
+  position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+  width: 300px; height: 240px;
+  background: radial-gradient(ellipse, rgba(255,205,60,0.16) 0%, transparent 75%);
+  pointer-events: none;
+}
+#url-reward-icon { font-size: 52px; display: block; margin-bottom: 20px; }
+#url-reward-title {
+  font: 17px 'Georgia', serif; font-weight: normal; letter-spacing: 0.10em;
+  color: rgba(255,232,120,0.95); margin: 0 0 14px;
+  text-shadow: 0 0 25px rgba(255,205,60,0.45);
+}
+#url-reward-desc {
+  font: italic 15px/1.7 'Georgia', serif;
+  color: rgba(220,235,255,0.80); margin: 0 0 28px;
+}
+#url-reward-claim-btn {
+  display: block; width: 100%; padding: 14px; margin-bottom: 10px;
+  background: rgba(255,185,130,0.10);
+  border: 1px solid rgba(255,185,130,0.45);
+  border-radius: 12px;
+  color: rgba(255,215,180,0.90);
+  font: 13px/1 'Georgia', serif; letter-spacing: 0.18em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.3s ease;
+}
+#url-reward-claim-btn:hover {
+  background: rgba(255,185,130,0.20); border-color: rgba(255,185,130,0.75);
+  color: rgba(255,240,210,1); transform: translateY(-2px);
+}
+#url-reward-claim-btn:active { transform: translateY(1px); }
+#url-reward-close-btn {
+  background: none; border: none; color: rgba(150,180,255,0.50);
+  font: italic 13px 'Georgia', serif; cursor: pointer; padding: 8px;
+  transition: color 0.2s;
+}
+#url-reward-close-btn:hover { color: rgba(160,195,255,0.85); }
+
 </style>
 </head>
 <body>
@@ -1566,6 +1654,7 @@ body:has(#timer-welcome.visible) #manual-hud-btn { display: none; }
   </div>
   <button id="tw-enter-btn">LET'S GOOOOOO</button>
   <button id="manual-btn" onclick="document.getElementById('manual-overlay').classList.add('open'); timerFreezeForManual()">Guide de navigation →</button>
+  <button id="tw-inventory-btn" onclick="openGalleryUI('rewards')">Étoiles & Cadeaux →</button>
 </div>
 
 <!-- ── Expired overlay ───────────────────────────────────────────────────── -->
@@ -1636,6 +1725,17 @@ function manHeartPop(e) {
 }
 </script>
 
+<!-- ── URL reward claim modal ────────────────────────────────────────────── -->
+<div id="url-reward-overlay">
+  <div id="url-reward-card">
+    <span id="url-reward-icon">🎁</span>
+    <div id="url-reward-title"></div>
+    <div id="url-reward-desc"></div>
+    <button id="url-reward-claim-btn">Réclamer</button>
+    <button id="url-reward-close-btn">Fermer</button>
+  </div>
+</div>
+
 <script src="js/manual-content.js"></script>
 <script src="js/config.js"></script>
 <script src="js/haptics.js"></script>
@@ -1655,6 +1755,11 @@ function manHeartPop(e) {
 <script src="js/roulette.js"></script>
 <script src="js/main.js"></script>
 <script src="js/boot-content.js"></script>
+<script>
+if (new URLSearchParams(window.location.search).get('r')) {
+  BOOT_LINES.splice(1, 0, { text: "Eh t'as reçu une récompense, raphaël est vraiment trop gentil..", gold: true });
+}
+</script>
 <script src="js/boot.js"></script>
 <script>
 // Inject manual text from js/manual-content.js
@@ -1688,6 +1793,115 @@ function manHeartPop(e) {
   set('man-ch6-p3',      MANUAL.ch6_p3);
   set('man-closing-text', MANUAL.closing_text);
   set('man-closing-sig',  MANUAL.closing_sig);
+})();
+</script>
+
+<script>
+// ── URL reward claim system ────────────────────────────────────────────────
+
+function applyUrlReward(pw) {
+  const claimed = JSON.parse(localStorage.getItem('ns_claimed_rewards') || '[]');
+  if (!claimed.includes(pw.r)) {
+    claimed.push(pw.r);
+    localStorage.setItem('ns_claimed_rewards', JSON.stringify(claimed));
+  }
+  const pending = JSON.parse(localStorage.getItem('ns_pending_rewards') || '[]');
+  const idx = pending.findIndex(p => p.r === pw.r);
+  if (idx >= 0) { pending.splice(idx, 1); localStorage.setItem('ns_pending_rewards', JSON.stringify(pending)); }
+
+  const m = pw.m || 0, d = pw.d || 0, f = pw.f || 0, s = pw.s || 0;
+  if (m) {
+    timerUsedToday -= m * 60;
+    timerSessionStart = Date.now();
+    if (timerExpired) {
+      timerExpired = false; timerActive = true;
+      document.body.classList.remove('sky-expired');
+      const expEl = document.getElementById('timer-expired');
+      if (expEl) expEl.classList.remove('visible');
+    }
+    timerWarned = timerSecondsRemaining() <= 60;
+    localStorage.setItem(LS_PLAYTIME, String(Math.round(timerUsedToday)));
+    const _rem = timerSecondsRemaining();
+    timerUpdateHUD(_rem);
+    timerUpdateWelcomeArc(_rem);
+  }
+  if (d) earnDust(d);
+  if (f) { for (let i = 0; i < f; i++) earnFrag(); }
+  if (s) {
+    const bonus = parseInt(localStorage.getItem(LS_ROULETTE_BONUS) || '0', 10) + s;
+    localStorage.setItem(LS_ROULETTE_BONUS, String(bonus));
+    if (typeof rlUpdateBtn === 'function') rlUpdateBtn();
+  }
+}
+
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const r = params.get('r');
+  if (!r) return;
+
+  // Clear URL immediately so refresh doesn't re-trigger
+  history.replaceState(null, '', window.location.pathname);
+
+  const m = parseInt(params.get('m') || '0', 10) || 0;
+  const d = parseInt(params.get('d') || '0', 10) || 0;
+  const f = parseInt(params.get('f') || '0', 10) || 0;
+  const s = parseInt(params.get('s') || '0', 10) || 0;
+
+  const overlay  = document.getElementById('url-reward-overlay');
+  const titleEl  = document.getElementById('url-reward-title');
+  const descEl   = document.getElementById('url-reward-desc');
+  const claimBtn = document.getElementById('url-reward-claim-btn');
+  const closeBtn = document.getElementById('url-reward-close-btn');
+
+  const claimed = JSON.parse(localStorage.getItem('ns_claimed_rewards') || '[]');
+  const pending = JSON.parse(localStorage.getItem('ns_pending_rewards') || '[]');
+
+  function waitForBootThenShow() {
+    const bootEl = document.getElementById('boot-overlay');
+    if (!bootEl || bootEl.style.display === 'none') { overlay.classList.add('open'); return; }
+    const obs = new MutationObserver(() => {
+      if (bootEl.style.display === 'none') { obs.disconnect(); overlay.classList.add('open'); }
+    });
+    obs.observe(bootEl, { attributes: true, attributeFilter: ['style'] });
+  }
+
+  if (claimed.includes(r)) {
+    titleEl.textContent    = 'Déjà réclamée';
+    descEl.textContent     = 'Tu as déjà réclamé cette récompense.';
+    claimBtn.style.display = 'none';
+    closeBtn.addEventListener('click', () => overlay.classList.remove('open'));
+    waitForBootThenShow();
+    return;
+  }
+
+  // Already saved as pending — no modal, she'll find it in her inventory
+  if (pending.some(p => p.r === r)) return;
+
+  const parts = [];
+  if (m) parts.push(`+${m} min`);
+  if (d) parts.push(`+${d} dust`);
+  if (f) parts.push(`+${f} fragment${f > 1 ? 's' : ''}`);
+  if (s) parts.push(`+${s} spin${s > 1 ? 's' : ''}`);
+
+  titleEl.textContent = '🎁 Récompense disponible';
+  descEl.textContent  = parts.join(', ');
+
+  const pw = { r, m, d, f, s, desc: parts.join(', ') };
+
+  claimBtn.addEventListener('click', function() {
+    applyUrlReward(pw);
+    overlay.classList.remove('open');
+  });
+
+  closeBtn.addEventListener('click', function() {
+    // Save for later claim from inventory
+    const currentPending = JSON.parse(localStorage.getItem('ns_pending_rewards') || '[]');
+    currentPending.push(pw);
+    localStorage.setItem('ns_pending_rewards', JSON.stringify(currentPending));
+    overlay.classList.remove('open');
+  });
+
+  waitForBootThenShow();
 })();
 </script>
 

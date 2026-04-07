@@ -83,13 +83,14 @@
       return;
     }
 
-    const { text, bar, header, love, done: doneLabel = 'done', doneColor = '#44ff88' } = LINES[index];
+    const { text, bar, header, love, gold, done: doneLabel = 'done', doneColor = '#44ff88' } = LINES[index];
     const isLast = index === LINES.length - 1;
 
     const lineEl = document.createElement('div');
     lineEl.className = 'bt-line'
       + (header ? ' bt-header' : '')
-      + (!love && isLast ? ' bt-last' : '');
+      + (!love && isLast ? ' bt-last' : '')
+      + (gold ? ' bt-gold' : '');
     terminal.appendChild(lineEl);
 
     // Instant lines: header, separator, blank

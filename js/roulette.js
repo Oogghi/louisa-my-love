@@ -2,6 +2,7 @@
 
 const LS_ROULETTE_DAY   = 'nsky_v2_roulette_day';
 const LS_ROULETTE_SPINS = 'nsky_v2_roulette_spins';
+const LS_ROULETTE_BONUS = 'nsky_v2_roulette_bonus_spins';
 const RL_EXTRA_COST     = 100;
 
 const RL_N   = 8;
@@ -42,7 +43,11 @@ function rlSpinsToday() {
   return parseInt(localStorage.getItem(LS_ROULETTE_SPINS) || '0', 10);
 }
 
-function rlFreeAvailable() { return rlSpinsToday() === 0; }
+function rlBonusSpins() {
+  return parseInt(localStorage.getItem(LS_ROULETTE_BONUS) || '0', 10);
+}
+
+function rlFreeAvailable() { return rlSpinsToday() === 0 || rlBonusSpins() > 0; }
 
 // ── weighted random pick ──────────────────────────────────────────────────────
 
@@ -86,9 +91,11 @@ function rlAnimate(now) {
 
 function rouletteSpin() {
   if (_rlSpinning) return;
-  const isFree = rlFreeAvailable();
-  if (!isFree && dustTotal < RL_EXTRA_COST) return;
-  if (!isFree) spendDust(RL_EXTRA_COST);
+  const isFree  = rlSpinsToday() === 0;
+  const isBonus = !isFree && rlBonusSpins() > 0;
+  if (!isFree && !isBonus && dustTotal < RL_EXTRA_COST) return;
+  if (!isFree && !isBonus) spendDust(RL_EXTRA_COST);
+  if (isBonus) localStorage.setItem(LS_ROULETTE_BONUS, String(rlBonusSpins() - 1));
 
   const today = new Date().toDateString();
   localStorage.setItem(LS_ROULETTE_DAY,   today);
@@ -155,7 +162,7 @@ function rlGrantTime(secs) {
   if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate([40, 30, 80]);
   document.getElementById('roulette-overlay').classList.remove('open');
   setTimeout(() => {
-    timerUsedToday    = Math.max(0, timerUsedToday - secs);
+    timerUsedToday   -= secs;
     timerSessionStart = Date.now();
     timerExpired      = false;
     timerActive       = true;
@@ -365,7 +372,7 @@ function rlUpdateBtn() {
   if (rlFreeAvailable()) {
     btn.disabled       = false;
     btn.textContent    = 'Tourner !';
-    infoEl.textContent = 'Tirage gratuit ✦';
+    infoEl.textContent = rlSpinsToday() === 0 ? 'Tirage gratuit ✦' : 'Tirage bonus ✦';
   } else {
     const ok           = dustTotal >= RL_EXTRA_COST;
     btn.disabled       = !ok;
