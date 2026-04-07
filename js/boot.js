@@ -26,12 +26,22 @@
   cursorEl.textContent = '_';
 
   function typeLine(lineEl, text, onDone) {
-    const chars = [...text]; // spread splits by Unicode code point, not UTF-16 unit — fixes emoji
+    const chars = [...text]; // spread by code point so emoji stay as one element
     let i = 0;
     lineEl.appendChild(cursorEl);
     function step() {
       cursorEl.remove();
-      lineEl.insertBefore(document.createTextNode(chars[i]), null);
+      const ch = chars[i];
+      // Emoji (outside BMP) need a span to escape the monospace font stack on iOS —
+      // otherwise Apple Color Emoji fallback never kicks in and they render as boxes.
+      if (ch.codePointAt(0) > 0xFFFF) {
+        const sp = document.createElement('span');
+        sp.className = 'bt-emoji';
+        sp.textContent = ch;
+        lineEl.insertBefore(sp, null);
+      } else {
+        lineEl.insertBefore(document.createTextNode(ch), null);
+      }
       i++;
       lineEl.appendChild(cursorEl);
       if (i >= chars.length) { cursorEl.remove(); onDone(); }
