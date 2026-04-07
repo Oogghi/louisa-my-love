@@ -26,14 +26,15 @@
   cursorEl.textContent = '_';
 
   function typeLine(lineEl, text, onDone) {
+    const chars = [...text]; // spread splits by Unicode code point, not UTF-16 unit — fixes emoji
     let i = 0;
     lineEl.appendChild(cursorEl);
     function step() {
       cursorEl.remove();
-      lineEl.insertBefore(document.createTextNode(text[i]), null);
+      lineEl.insertBefore(document.createTextNode(chars[i]), null);
       i++;
       lineEl.appendChild(cursorEl);
-      if (i >= text.length) { cursorEl.remove(); onDone(); }
+      if (i >= chars.length) { cursorEl.remove(); onDone(); }
       else setTimeout(step, CHAR_MS / boost);
     }
     setTimeout(step, CHAR_MS / boost);
