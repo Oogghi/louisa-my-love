@@ -1306,15 +1306,15 @@ body:has(#timer-welcome.visible) #home-btn        { display: none; }
   color: rgba(230,180,140,0.45);
 }
 
-/* ── Welcome screen inventory button ────────────────────────────────────── */
-#tw-inventory-btn {
+/* ── Welcome screen secondary buttons ───────────────────────────────────── */
+#tw-inventory-btn, #tw-roulette-btn {
   background: none; border: 1px solid rgba(255,185,130,0.18); border-radius: 20px;
   padding: 8px 22px; color: rgba(230,180,140,0.50);
   font: 10px/1 'Georgia', serif; letter-spacing: 0.18em; text-transform: uppercase;
   cursor: pointer; margin-top: 10px;
   transition: border-color 0.3s, color 0.3s;
 }
-#tw-inventory-btn:hover { border-color: rgba(255,185,130,0.45); color: rgba(255,215,180,0.85); }
+#tw-inventory-btn:hover, #tw-roulette-btn:hover { border-color: rgba(255,185,130,0.45); color: rgba(255,215,180,0.85); }
 
 /* ── Pending reward claim button (inside inventory card) ─────────────────── */
 .reward-claim-btn {
@@ -1676,6 +1676,7 @@ body:has(#timer-welcome.visible) #home-btn        { display: none; }
   <button id="tw-enter-btn">LET'S GOOOOOO</button>
   <button id="manual-btn" onclick="document.getElementById('manual-overlay').classList.add('open'); timerFreezeForManual()">Guide de navigation →</button>
   <button id="tw-inventory-btn" onclick="openGalleryUI('rewards')">Étoiles & Cadeaux →</button>
+  <button id="tw-roulette-btn" onclick="rouletteOpen()">Roue Céleste ✦</button>
 </div>
 
 <!-- ── Expired overlay ───────────────────────────────────────────────────── -->
