@@ -1,7 +1,13 @@
 // ── nuke mode ─────────────────────────────────────────────────────────────────
 
-let nukeMode    = false;
-let _lastNukeT  = 0;
+let nukeMode      = false;
+let _lastNukeT    = 0;
+let _sessionNukes = 0;   // stars destroyed this session (for diminishing returns)
+
+// Returns a [0.4, 1.0] multiplier that decays after the 30th nuke of the session.
+function _nukeDecayFactor() {
+  return Math.max(0.4, 1.0 - Math.max(0, _sessionNukes - 30) * 0.02);
+}
 const nukeExplosions      = [];   // active explosion visuals
 const nukeBlasts          = [];   // screen-space star-push events
 const dimmedConsts        = new Map(); // type → Set<tileKey>  (per-tile, not per-type)
@@ -238,7 +244,8 @@ function fireNuke(cx, cy, t) {
   }
 
   if (constHit) {
-    const dust = Math.round(1 * dustMult);
+    _sessionNukes++;
+    const dust = Math.round(1 * dustMult * _nukeDecayFactor());
     _spawnDustFloat(constHit.sx, constHit.sy - 20, dust);
     earnDust(dust);
     triggerNukeExplosion(constHit.sx, constHit.sy, {
@@ -252,8 +259,8 @@ function fireNuke(cx, cy, t) {
   if (!hit) return;
 
   // Earn dust from the destroyed star
-  const raw  = 1;
-  const dust = Math.round(raw * dustMult);
+  _sessionNukes++;
+  const dust = Math.round(1 * dustMult * _nukeDecayFactor());
   _spawnDustFloat(hit.px, hit.py - 20, dust);
   earnDust(dust);
 

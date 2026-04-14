@@ -11,14 +11,14 @@ const RL_SEG = 2 * Math.PI / RL_N;
 // Labels are short to fit tangentially on the wheel.
 // Full rewards (incl. bonus frags) are revealed in the result message.
 const RL_PRIZES = [
-  { label: '+30 ✦',  col: [100, 175, 255], reward: { dust:  30         }, weight: 28 },
-  { label: '+80 ✦',  col: [255, 210,  70], reward: { dust:  80         }, weight: 22 },
+  { label: '+20 ✦',  col: [100, 175, 255], reward: { dust:  20         }, weight: 28 },
+  { label: '+55 ✦',  col: [255, 210,  70], reward: { dust:  55         }, weight: 22 },
   { label: '+1 ✧',   col: [ 80, 230, 255], reward: { frag:   1         }, weight: 18 },
-  { label: '+150 ✦', col: [255, 160,  55], reward: { dust: 150         }, weight: 12 },
+  { label: '+100 ✦', col: [255, 160,  55], reward: { dust: 100         }, weight: 12 },
   { label: '+2 min', col: [ 70, 255, 150], reward: { time: 120         }, weight:  7 },
-  { label: '+100 ✦', col: [255, 110, 180], reward: { dust: 100, frag: 1}, weight:  6 },
+  { label: '+70 ✦',  col: [255, 110, 180], reward: { dust:  70, frag: 1}, weight:  6 },
   { label: '+5 ✧',   col: [185, 110, 255], reward: { frag:   5         }, weight:  5 },
-  { label: '500 ✦',  col: [255, 225,  35], reward: { dust: 500, frag:10}, weight:  2 },
+  { label: '350 ✦',  col: [255, 225,  35], reward: { dust: 350, frag:10}, weight:  2 },
 ];
 
 // ── state ─────────────────────────────────────────────────────────────────────

@@ -85,9 +85,9 @@ function activateDustMult(mult, secs) {
   updateDustHUD();
   _boostBorn = performance.now() * 0.001;
   _boostMult = mult;
-  const label = mult >= 5
-    ? 'Parfait ! ×5 poussière pendant 15s ✦'
-    : '×3 poussière pendant 15s ✦';
+  const label = mult >= 2
+    ? 'Parfait ! ×2 poussière pendant 15s ✦'
+    : '×1.5 poussière pendant 15s ✦';
   showToast(label, 2600);
 }
 
@@ -97,7 +97,7 @@ let _boostBorn = -999;
 let _boostMult = 1;
 
 function drawBoostEffect(t) {
-  const isX2  = _boostMult >= 5;
+  const isX2  = _boostMult >= 2;
   const rgb   = isX2 ? '255,190,80' : '110,185,255';
   const snapY = H * 0.88;
 
