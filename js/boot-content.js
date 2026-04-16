@@ -22,6 +22,8 @@ const BOOT_LINES = [
   { text: '> Rocky va bien! 👎',                        bar: true              },
   { text: ''                                                        },
   { text: '> chargement de mon amour',     love: true              },
+  { text: ''                                                        },
+  { text: '> désolé louisa pour ce soir, je t\'aime beaucoup sache le, désolé...', glitch: true },
 ];
 
 // Percentage steps shown during the love sequence.

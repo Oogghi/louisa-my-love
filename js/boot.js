@@ -94,13 +94,13 @@
       return;
     }
 
-    const { text, bar, header, love, gold, done: doneLabel = 'done', doneColor = '#44ff88' } = LINES[index];
+    const { text, bar, header, love, gold, glitch, done: doneLabel = 'done', doneColor = '#44ff88' } = LINES[index];
     const isLast = index === LINES.length - 1;
 
     const lineEl = document.createElement('div');
     lineEl.className = 'bt-line'
       + (header ? ' bt-header' : '')
-      + (!love && isLast ? ' bt-last' : '')
+      + (!love && !glitch && isLast ? ' bt-last' : '')
       + (gold ? ' bt-gold' : '');
     terminal.appendChild(lineEl);
 
@@ -137,6 +137,14 @@
           cursorEl.remove();
           setTimeout(() => runLine(index + 1), 55 / boost);
         });
+      });
+      return;
+    }
+
+    if (glitch) {
+      typeLine(lineEl, text, () => {
+        lineEl.classList.add('bt-glitch');
+        setTimeout(() => runLine(index + 1), 10000);
       });
       return;
     }

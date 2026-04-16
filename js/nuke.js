@@ -8,6 +8,9 @@ let _sessionNukes = 0;   // stars destroyed this session (for diminishing return
 function _nukeDecayFactor() {
   return Math.max(0.4, 1.0 - Math.max(0, _sessionNukes - 30) * 0.02);
 }
+function _calcNukeDust() {
+  return Math.max(1, Math.round(dustMult * _nukeDecayFactor()));
+}
 const nukeExplosions      = [];   // active explosion visuals
 const nukeBlasts          = [];   // screen-space star-push events
 const dimmedConsts        = new Map(); // type → Set<tileKey>  (per-tile, not per-type)
@@ -233,7 +236,7 @@ function drawConstellationNebulae(t) {
 
 function fireNuke(cx, cy, t) {
   if (!nukeMode) return;
-  if (t - _lastNukeT < 0.6) return;
+  if (t - _lastNukeT < 0.75) return;
   _lastNukeT = t;
 
   // Check constellation stars first  /  clicking any star of a constellation nukes it
@@ -245,7 +248,7 @@ function fireNuke(cx, cy, t) {
 
   if (constHit) {
     _sessionNukes++;
-    const dust = Math.round(1 * dustMult * _nukeDecayFactor());
+    const dust = _calcNukeDust();
     _spawnDustFloat(constHit.sx, constHit.sy - 20, dust);
     earnDust(dust);
     triggerNukeExplosion(constHit.sx, constHit.sy, {
@@ -260,7 +263,7 @@ function fireNuke(cx, cy, t) {
 
   // Earn dust from the destroyed star
   _sessionNukes++;
-  const dust = Math.round(1 * dustMult * _nukeDecayFactor());
+  const dust = Math.max(1, Math.round(dustMult * _nukeDecayFactor()));
   _spawnDustFloat(hit.px, hit.py - 20, dust);
   earnDust(dust);
 
